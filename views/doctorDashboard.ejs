@@ -125,14 +125,13 @@
     <!-- Main Content Section -->
     <div class="main-content">
         <h1>Welcome to Your Dashboard, Doctor</h1>
-
+    
         <!-- Profile Info Section -->
         <div class="profile-info">
             <img src="doctor-profile-pic.jpg" alt="Profile Picture"> <!-- Replace with actual profile picture -->
             <div class="profile-details">
-                <p><strong>Doctor ID:</strong> D987654</p>
-                <p><strong>Specialization:</strong> Cardiologist</p>
-                <p><strong>Years of Experience:</strong> 10</p>
+                <p><strong>Doctor ID:</strong> <%= doctorId %></p>
+                <p><strong>Specialization:</strong> <%= specialization %></p> <!-- Display specialization -->
                 <p><strong>Gender:</strong> Female</p>
             </div>
             <button class="button" onclick="editProfile()">Edit Profile</button>
