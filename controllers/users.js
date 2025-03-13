@@ -67,9 +67,6 @@ export const signupCtrl = async (req, res, next) => {
 // Login Controller
 export const loginCtrl = async (req, res) => {
   const { email, password } = req.body;
-  console.log("login");
-  console.log(email);
-  console.log(password);
 
   // Check if fields are empty
   if (!email || !password) {
@@ -107,16 +104,16 @@ export const loginCtrl = async (req, res) => {
     if (!isPasswordValid) {
       return res.render("../views/login", { error: "Invalid login credentials" });
     }
-    
-    // Save the user ID in the session
-    // req.session.userAuth = user.id;
+
+    // Save the user ID and role in the session
+    req.session.userId = user.studentid || user.doctorid; // Ensure correct ID is set
+    req.session.role = role;
 
     // Redirect to appropriate dashboard
     if (role === "student") {
       console.log("student");
       studentDashboardCtrl(req, res);
     } else if (role === "doctor") {
-      console.log("doctor");
       doctorDashboardCtrl(req, res);
     }
   } catch (error) {
@@ -133,8 +130,24 @@ export const studentDashboardCtrl = async (req, res) => {
 
 // Doctor Dashboard Controller
 export const doctorDashboardCtrl = async (req, res) => {
-  res.render("doctorDashboard", { error: "" });
-  console.log("doctor dashboard");
+  const doctorId = req.session.userId;
+
+  try {
+    const doctor = await pool.query(
+      "SELECT specialization FROM doctor WHERE doctorid = $1",
+      [doctorId]
+    );
+
+    if (doctor.rows.length === 0) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const specialization = doctor.rows[0].specialization;
+    res.render("doctorDashboard", { doctorId, specialization });
+  } catch (error) {
+    console.error("Database error:", error.message);
+    res.status(500).json({ error: "An error occurred while fetching doctor details" });
+  }
 };
 
 // Admin Dashboard Controller
@@ -143,13 +156,13 @@ export const adminDashboardCtrl = async (req, res) => {
   console.log("admin dashboard");
 };
 
-// Medical History Controller
+// Medical History Controller for student
 export const medicalHistoryCtrl = async (req, res) => {
   res.render("medical_history", { error: "" });
   console.log("medical_history");
 };
 
-// View Prescriptions Controller
+// View Prescriptions Controller for student
 export const viewPrescriptionsCtrl = async (req, res) => {
   res.render("prescription", { error: "" });
   console.log("prescription");
