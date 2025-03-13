@@ -26,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // db.connect();
 //users route
+// commment
+//new cmnt
 app.use("/", userRoutes);
 app.use('/doctor', doctorRoutes);
 
