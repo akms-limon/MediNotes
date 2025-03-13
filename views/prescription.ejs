@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 60%;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .patient-info, .prescription-table {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .patient-info td {
+            padding: 8px;
+            font-weight: bold;
+        }
+        .prescription-table, .prescription-table th, .prescription-table td {
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+        }
+        .prescription-table th, .prescription-table td {
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .download-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Prescription Details</h1>
+        </div>
+
+        <table class="patient-info">
+            <tr>
+                <td>Patient Name:</td>
+                <td>John Doe</td>
+            </tr>
+            <tr>
+                <td>Age:</td>
+                <td>45</td>
+            </tr>
+            <tr>
+                <td>Disease:</td>
+                <td>Hypertension</td>
+            </tr>
+            <tr>
+                <td>Blood Pressure:</td>
+                <td>140/90 mmHg</td>
+            </tr>
+            <tr>
+                <td>Weight:</td>
+                <td>80 kg</td>
+            </tr>
+        </table>
+
+        <table class="prescription-table">
+            <thead>
+                <tr>
+                    <th>Prescription</th>
+                    <th>Dosage</th>
+                    <th>Duration</th>
+                    <th>Times per Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lisinopril</td>
+                    <td>10 mg</td>
+                    <td>7 days</td>
+                    <td>1 + 0 + 1</td>
+                </tr>
+                <tr>
+                    <td>Amlodipine</td>
+                    <td>5 mg</td>
+                    <td>14 days</td>
+                    <td>1 + 0 + 0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="download-btn" onclick="window.print()">Download Prescription</button>
+    </div>
+</body>
+</html>

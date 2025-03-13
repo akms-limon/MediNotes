@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="../public/css/signup.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sign Up</h1>
+        </header>
+        <form id="signupForm" action="/signup" method="POST">
+            <div class="user-type">
+                <label>
+                    <input type="radio" name="role" value="doctor" required>
+                    Doctor
+                </label>
+                <label>
+                    <input type="radio" name="role" value="student" required>
+                    Student
+                </label>
+            </div>
+            <div id="commonFields">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname"  placeholder="Enter your full name" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                <span id="passwordError" style="color: red; display: none;">Passwords do not match</span>
+
+                <label for="Id">ID:</label>
+                <input type="text" id="Id" name="Id" placeholder="Enter your ID">
+            </div>
+            <div id="doctorFields" style="display: none;">
+                <label for="specialization">Specialization:</label>
+                <select id="specialization" name="specialization">
+                    <option value="cardiology">Cardiology</option>
+                    <option value="neurology">Neurology</option>
+                    <option value="orthopedics">Orthopedics</option>
+                    <option value="pediatrics">Pediatrics</option>
+                    <option value="general">General</option>
+                </select>
+            </div>
+            <button type="submit" id="submitBtn">Sign Up</button>
+            <p>Already have an account? <a href="/login">Login</a></p>
+        </form>
+        <footer>
+            <p>&copy; MediNotes</p>
+        </footer>
+    </div>
+    <script>
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const passwordError = document.getElementById('passwordError');
+        const submitBtn = document.getElementById('submitBtn');
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const doctorFields = document.getElementById('doctorFields');
+
+        function validatePassword() {
+            if (password.value !== confirmPassword.value) {
+                passwordError.style.display = 'inline';
+                submitBtn.disabled = true;
+                document.getElementById('specialization').setAttribute('required', 'required');
+            } else {
+                document.getElementById('specialization').removeAttribute('required');
+                passwordError.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function toggleDoctorFields() {
+            const selectedRole = document.querySelector('input[name="role"]:checked').value;
+            if (selectedRole === 'doctor') {
+                doctorFields.style.display = 'block';
+            } else {
+                doctorFields.style.display = 'none';
+            }
+        }
+
+        password.addEventListener('input', validatePassword);
+        confirmPassword.addEventListener('input', validatePassword);
+        roleInputs.forEach(input => input.addEventListener('change', toggleDoctorFields));
+    </script>
+</body>
+</html>

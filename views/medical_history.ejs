@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .actions a {
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .actions a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Medical History</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Prescribed Date</th>
+                    <th>Condition</th>
+                    <th>Doctor Name</th>
+                    <th>Notes</th>
+                    <th>Prescription</th>
+                    <th>Attachments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2025-02-04</td>
+                    <td>Flu</td>
+                    <td>Dr. Nasim Shah</td>
+                    <td>Take rest and drink fluids</td>
+                    <td class="actions"><a href="/view-prescriptions" onclick="viewPrescription()">View</a></td>
+                    <td class="actions"><a href="/view-attachments" onclick="viewAttachments()">View</a></td>
+                </tr>
+                <tr>
+                    <td>2025-01-20</td>
+                    <td>Allergy</td>
+                    <td>Dr. Edword Gomez</td>
+                    <td>Use antihistamines as needed</td>
+                    <td class="actions"><a href="/view-prescriptions" onclick="viewPrescription()">View</a></td>
+                    <td class="actions"><a href="/view-attachments" onclick="viewAttachments()">View</a></td>
+                </tr>
+                <tr>
+                    <td>2024-12-15</td>
+                    <td>Headache</td>
+                    <td>Dr. Farjana</td>
+                    <td>Take painkillers and rest</td>
+                    <td class="actions"><a href="/view-prescriptions" onclick="viewPrescription()">View</a></td>
+                    <td class="actions"><a href="/view-attachments" onclick="viewAttachments()">View</a></td>
+                </tr>
+                <tr>
+                    <td>2024-11-30</td>
+                    <td>Stomachache</td>
+                    <td>Dr. Animesh</td>
+                    <td>Avoid spicy food and drink water</td>
+                    <td class="actions"><a href="/view-prescriptions" onclick="viewPrescription()">View</a></td>
+                    <td class="actions"><a href="/view-attachments" onclick="viewAttachments()">View</a></td>
+                </tr>
+                <tr>
+                    <td>2024-10-25</td>
+                    <td>Back Pain</td>
+                    <td>Dr. Debi Shethy</td>
+                    <td>Apply hot/cold packs and do stretches</td>
+                    <td class="actions"><a href="/view-prescriptions" onclick="viewPrescription()">View</a></td>
+                    <td class="actions"><a href="/view-attachments" onclick="viewAttachments()">View</a></td>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function viewPrescription() {
+            alert('Viewing Prescription');
+        }
+        
+        function viewAttachments() {
+            alert('Viewing Attachments');
+        }
+    </script>
+</body>
+</html>

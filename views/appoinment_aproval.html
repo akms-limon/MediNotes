@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Approval</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Navigation Bar Styling */
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .navbar a:hover {
+            background-color: #575757;
+        }
+
+        .navbar-right {
+            float: right;
+        }
+
+        /* Main Section */
+        .main-content {
+            margin: 20px auto;
+            width: 80%;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content h1 {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        /* Action Buttons */
+        .approve-btn, .reject-btn {
+            padding: 8px 15px;
+            font-size: 14px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .approve-btn {
+            background-color: #4CAF50;
+        }
+
+        .approve-btn:hover {
+            background-color: #45a049;
+        }
+
+        .reject-btn {
+            background-color: #f44336;
+        }
+
+        .reject-btn:hover {
+            background-color: #e53935;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="#">Profile</a>
+        <a href="#">Medical History</a>
+        <a href="#">Request Appointments</a>
+        <a href="#">Request for Appointments</a>
+        <div class="navbar-right">
+            <a href="#">Sign Up</a>
+            <a href="#">Sign In</a>
+        </div>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+        <h1>Appointment Approval</h1>
+
+        <!-- Appointment Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Appointment Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>2025-02-10</td>
+                    <td>Routine Checkup</td>
+                    <td>Pending</td>
+                    <td>
+                        <button class="approve-btn" onclick="approveAppointment('John Doe')">Approve</button>
+                        <button class="reject-btn" onclick="rejectAppointment('John Doe')">Reject</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>2025-02-12</td>
+                    <td>Blood Test</td>
+                    <td>Pending</td>
+                    <td>
+                        <button class="approve-btn" onclick="approveAppointment('Jane Smith')">Approve</button>
+                        <button class="reject-btn" onclick="rejectAppointment('Jane Smith')">Reject</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>David Clark</td>
+                    <td>2025-02-15</td>
+                    <td>Follow-up Appointment</td>
+                    <td>Pending</td>
+                    <td>
+                        <button class="approve-btn" onclick="approveAppointment('David Clark')">Approve</button>
+                        <button class="reject-btn" onclick="rejectAppointment('David Clark')">Reject</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Medical Report Portal. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function approveAppointment(patientName) {
+            alert('Appointment for ' + patientName + ' has been approved.');
+            // Add real approval logic here
+        }
+
+        function rejectAppointment(patientName) {
+            alert('Appointment for ' + patientName + ' has been rejected.');
+            // Add real rejection logic here
+        }
+    </script>
+
+</body>
+</html>
