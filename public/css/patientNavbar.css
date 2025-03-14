@@ -1,0 +1,33 @@
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Style for navbar links */
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* Hover effect */
+.navbar a:hover {
+  background-color: #575757;
+  border-radius: 5px;
+}
+
+/* Left-side links */
+.navbar-left {
+  display: flex;
+  gap: 15px;
+}
+
+/* Right-side links (Logout) */
+.navbar-right {
+  margin-left: auto;
+}

@@ -1,56 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="/public/css/studentDashboard.css">
-</head>
-<body>
-
-    <!-- Navigation Bar -->
-    <div class="navbar">
-        <a href="#">Profile</a>
-        <a href="#">Medical History</a>
-        <a href="#">Request Appointments</a>
-        <div class="navbar-right">
-            <a href="/" onclick="logout()">Logout</a>
-        </div>
-    </div>
-
+    <link rel="stylesheet" href="/public/css/studentDashboard.css" />
+  </head>
+  <body>
+    <!-- nav -->
+     <%- include('partials/patientNavbar.ejs') %>
+  
+     
+     
     <!-- Main Content Section -->
     <div class="main-content">
-        <h1>Welcome to Your Dashboard, <%= fullname %></h1>
-        <p>Debugging: Student ID is <%= studentId %></p> <!-- Debugging statement -->
+      <h1>Welcome to Your Dashboard, <%= fullname %></h1>
+      <!-- <p>Debugging: Student ID is <%= studentId %></p> Debugging statement -->
 
-        <!-- Profile Info Section -->
-        <div class="profile-info">
-            <img src="student-profile-pic.jpg" alt="Profile Picture"> <!-- Replace with actual profile picture -->
-            <div class="profile-details">
-                <p><strong>Student ID:</strong> <%= studentId %></p>
-                <p><strong>Full Name:</strong> <%= fullname %></p>
-                <p><strong>Email:</strong> <%= email %></p>
-            </div>
-            <button class="button" onclick="editProfile()">Edit Profile</button>
+      <!-- Profile Info Section -->
+      <div class="profile-info">
+        <img src="student-profile-pic.jpg" alt="Profile Picture" />
+        <!-- Replace with actual profile picture -->
+        <div class="profile-details">
+          <p><strong>Student ID:</strong> <%= studentId %></p>
+          <p><strong>Full Name:</strong> <%= fullname %></p>
+          <p><strong>Email:</strong> <%= email %></p>
         </div>
+        <button class="button" onclick="editProfile()">Edit Profile</button>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Student Portal. All Rights Reserved.</p>
+      <p>&copy; 2025 Student Portal. All Rights Reserved.</p>
     </footer>
 
     <script>
-        function logout() {
-            alert("Logging out...");
-            // Add functionality to log the user out
-        }
+      function logout() {
+        alert("Logging out...");
+        // Add functionality to log the user out
+      }
 
-        function editProfile() {
-            alert("Redirecting to edit profile page.");
-            // Add functionality to redirect to the edit profile page
-        }
+      function editProfile() {
+        alert("Redirecting to edit profile page.");
+        // Add functionality to redirect to the edit profile page
+      }
     </script>
-
-</body>
+  </body>
 </html>

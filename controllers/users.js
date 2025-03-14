@@ -194,8 +194,8 @@ export const viewAttachmentsCtrl = async (req, res) => {
 
 // Request Appointment Controller
 export const requestAppoinmentCtrl = async (req, res, next) => {
-//  res.render("appointment_submit_page", { error: "" });
-res.render("appointment_submit_page", { error: "" });
+// res.render("appointment_submit_page", { error: "" });
+res.render("appointmentSubmit", { error: "" });
   console.log("appointment_submit_page");
 };
 
