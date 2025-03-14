@@ -124,8 +124,26 @@ export const loginCtrl = async (req, res) => {
 
 // Student Dashboard Controller
 export const studentDashboardCtrl = async (req, res) => {
-  res.render("studentDashboard", { error: "" });
-  console.log("student dashboard");
+  const studentId = req.session.userId;
+  console.log("Student ID from session:", studentId);
+
+  try {
+    const student = await pool.query(
+      "SELECT fullname, email FROM student WHERE studentid = $1",
+      [studentId]
+    );
+
+    if (student.rows.length === 0) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+
+    const { fullname, email } = student.rows[0];
+    res.render("studentDashboard", { studentId, fullname, email });
+    console.log("student dashboard");
+  } catch (error) {
+    console.error("Database error:", error.message);
+    res.status(500).json({ error: "An error occurred while fetching student details" });
+  }
 };
 
 // Doctor Dashboard Controller
