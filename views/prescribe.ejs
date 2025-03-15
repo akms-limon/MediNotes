@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescribe</title>
+    <link rel="stylesheet" href="/public/css/prescribe.css">
+</head>
+<body>
+    <!-- nav -->
+    <%- include('partials/doctorNavbar.ejs') %>
+    <div class="container">
+        <h1>Search Student</h1>
+        <form id="searchForm">
+            <input type="text" id="studentId" placeholder="Enter Student ID" required>
+            <button type="submit">Search</button>
+        </form>
+        <div id="studentInfo" style="display: none;">
+            <h2>Student Information</h2>
+            <p><strong>Name:</strong> <span id="studentName"></span></p>
+            <p><strong>Height:</strong> <span id="studentHeight"></span></p>
+            <p><strong>Weight:</strong> <span id="studentWeight"></span></p>
+            <p><strong>Blood Group:</strong> <span id="studentBloodGroup"></span></p>
+            <p><strong>Blood Pressure:</strong> <span id="studentBloodPressure"></span></p>
+            <button onclick="window.location.href='/medical-history'">Medical History</button>
+            <button onclick="window.location.href='/create-prescription'">Prescribe Now</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Simulate fetching student data
+            const studentId = document.getElementById('studentId').value;
+            if (studentId === '12345') {
+                document.getElementById('studentName').innerText = 'John Doe';
+                document.getElementById('studentHeight').innerText = '5\'8"';
+                document.getElementById('studentWeight').innerText = '150 lbs';
+                document.getElementById('studentBloodGroup').innerText = 'O+';
+                document.getElementById('studentBloodPressure').innerText = '120/80';
+                document.getElementById('studentInfo').style.display = 'block';
+            } else {
+                alert('Student not found');
+            }
+        });
+
+        function viewMedicalHistory() {
+            alert('Viewing Medical History');
+        }
+
+        function prescribeNow() {
+            alert('Prescribing Now');
+        }
+    </script>
+</body>
+</html>
