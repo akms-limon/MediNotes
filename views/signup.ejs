@@ -47,6 +47,12 @@
                     <option value="orthopedics">Orthopedics</option>
                     <option value="pediatrics">Pediatrics</option>
                     <option value="general">General</option>
+                    <option value="gyneacology">Gyneacology</option>
+                    <option value="dermatology">Dermatology</option>
+                    <option value="ophthalmology">Ophthalmology</option>
+                    <option value="dentistry">Dentistry</option>
+                    <option value="psychiatry">Psychiatry</option>
+                    <option value="others">Others</option>
                 </select>
             </div>
             <button type="submit" id="submitBtn">Sign Up</button>
@@ -56,38 +62,5 @@
             <p>&copy; MediNotes</p>
         </footer>
     </div>
-    <script>
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirmPassword');
-        const passwordError = document.getElementById('passwordError');
-        const submitBtn = document.getElementById('submitBtn');
-        const roleInputs = document.querySelectorAll('input[name="role"]');
-        const doctorFields = document.getElementById('doctorFields');
-
-        function validatePassword() {
-            if (password.value !== confirmPassword.value) {
-                passwordError.style.display = 'inline';
-                submitBtn.disabled = true;
-                document.getElementById('specialization').setAttribute('required', 'required');
-            } else {
-                document.getElementById('specialization').removeAttribute('required');
-                passwordError.style.display = 'none';
-                submitBtn.disabled = false;
-            }
-        }
-
-        function toggleDoctorFields() {
-            const selectedRole = document.querySelector('input[name="role"]:checked').value;
-            if (selectedRole === 'doctor') {
-                doctorFields.style.display = 'block';
-            } else {
-                doctorFields.style.display = 'none';
-            }
-        }
-
-        password.addEventListener('input', validatePassword);
-        confirmPassword.addEventListener('input', validatePassword);
-        roleInputs.forEach(input => input.addEventListener('change', toggleDoctorFields));
-    </script>
 </body>
 </html>

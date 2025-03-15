@@ -1,0 +1,69 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 80%;
+  margin: 20px auto;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.filter {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.filter label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.filter select {
+  padding: 5px;
+  font-size: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f2f2f2;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.request-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #2196F3;
+  border: none;
+  cursor: pointer;
+  display: block;
+  margin: 30px auto;
+}
+
+.request-button:hover {
+  background-color: #0b7dda;
+}

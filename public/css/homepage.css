@@ -1,0 +1,75 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* Navigation Bar Styling */
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+}
+
+.navbar a:hover {
+  background-color: #575757;
+}
+
+.navbar-right {
+  float: right;
+}
+
+/* Main Section */
+.main-content {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.main-content h1 {
+  font-size: 36px;
+  color: #333;
+}
+
+.main-content p {
+  font-size: 18px;
+  color: #555;
+}
+
+/* Sign-up and Sign-in Buttons */
+.auth-buttons {
+  margin-top: 20px;
+}
+
+.auth-buttons a {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  margin: 5px;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.auth-buttons a:hover {
+  background-color: #45a049;
+}
+
+/* Footer */
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}

@@ -1,0 +1,130 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* Container */
+.container {
+  width: 50%; /* Reduced container width */
+  margin: 20px auto;
+  padding: 10px; /* Reduced padding */
+  background-color: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Table */
+.attachments-table, .attachments-table th, .attachments-table td {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  padding: 6px; /* Reduced padding */
+  text-align: left;
+  font-size: 14px; /* Reduced font size */
+}
+
+.attachments-table th {
+  background-color: #f2f2f2;
+}
+
+.attachments-table td {
+  padding: 8px;
+}
+
+.attachments-table .actions {
+  width: 160px; /* Reduced actions column width */
+}
+
+/* Button Container */
+.button-container {
+  display: flex;
+  gap: 8px; /* Reduced gap */
+}
+
+/* Buttons */
+.view-btn, .download-btn {
+  padding: 5px 10px; /* Reduced button padding */
+  font-size: 13px; /* Reduced button font size */
+  cursor: pointer;
+}
+
+.view-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.view-btn:hover {
+  background-color: #45a049;
+}
+
+.download-btn {
+  background-color: #008CBA;
+  color: white;
+  border: none;
+}
+
+.download-btn:hover {
+  background-color: #007B9E;
+}
+
+.add-btn {
+  display: block;
+  margin: 15px auto;
+  padding: 8px 16px; /* Reduced button size */
+  background-color: #f39c12;
+  color: white;
+  font-size: 14px; /* Reduced font size */
+  border: none;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background-color: #e67e22;
+}
+
+/* Modal (Popup) Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 15px; /* Reduced padding */
+  border: 1px solid #888;
+  width: 35%; /* Reduced width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  color: #aaa;
+  font-size: 24px; /* Reduced close button size */
+  font-weight: bold;
+  float: right;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

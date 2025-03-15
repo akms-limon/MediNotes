@@ -4,51 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical History</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: white;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .container h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .actions a {
-            text-decoration: none;
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        .actions a:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="/public/css/medical_history.css">
 </head>
 <body>
     <!-- nav -->
@@ -107,6 +63,7 @@
                     <td>Apply hot/cold packs and do stretches</td>
                     <td class="actions"><a href="/view-prescriptions" onclick="viewPrescription()">View</a></td>
                     <td class="actions"><a href="/view-attachments" onclick="viewAttachments()">View</a></td>
+                </tr>
             </tbody>
         </table>
     </div>
