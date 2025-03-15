@@ -112,9 +112,9 @@ export const loginCtrl = async (req, res) => {
     // Redirect to appropriate dashboard
     if (role === "student") {
       console.log("student");
-      studentDashboardCtrl(req, res);
+      res.redirect('/student/dashboard');
     } else if (role === "doctor") {
-      doctorDashboardCtrl(req, res);
+      res.redirect('/doctor/dashboard');
     }
   } catch (error) {
     console.error(error);
@@ -122,109 +122,8 @@ export const loginCtrl = async (req, res) => {
   }
 };
 
-// Student Dashboard Controller
-export const studentDashboardCtrl = async (req, res) => {
-  const studentId = req.session.userId;
-  console.log("Student ID from session:", studentId);
-
-  try {
-    const student = await pool.query(
-      "SELECT fullname, email FROM student WHERE studentid = $1",
-      [studentId]
-    );
-
-    if (student.rows.length === 0) {
-      return res.status(404).json({ error: "Student not found" });
-    }
-
-    const { fullname, email } = student.rows[0];
-    res.render("studentDashboard", { studentId, fullname, email });
-    console.log("student dashboard");
-  } catch (error) {
-    console.error("Database error:", error.message);
-    res.status(500).json({ error: "An error occurred while fetching student details" });
-  }
-};
-
-// Doctor Dashboard Controller
-export const doctorDashboardCtrl = async (req, res) => {
-  const doctorId = req.session.userId;
-
-  try {
-    const doctor = await pool.query(
-      "SELECT specialization FROM doctor WHERE doctorid = $1",
-      [doctorId]
-    );
-
-    if (doctor.rows.length === 0) {
-      return res.status(404).json({ error: "Doctor not found" });
-    }
-
-    const specialization = doctor.rows[0].specialization;
-    res.render("doctorDashboard", { doctorId, specialization });
-  } catch (error) {
-    console.error("Database error:", error.message);
-    res.status(500).json({ error: "An error occurred while fetching doctor details" });
-  }
-};
-
 // Admin Dashboard Controller
 export const adminDashboardCtrl = async (req, res) => {
   res.render("adminDashboard", { error: "" });
   console.log("admin dashboard");
-};
-
-// Medical History Controller for student
-export const medicalHistoryCtrl = async (req, res) => {
-  res.render("medical_history", { error: "" });
-  console.log("medical_history");
-};
-
-// Doctor Medical History Controller
-export const doctorMedicalHistoryCtrl = async (req, res) => {
-  res.render("doctorMedicalHistory", { error: "" });
-  console.log("doctor medical history");
-};
-
-// View Prescriptions Controller for student
-export const viewPrescriptionsCtrl = async (req, res) => {
-  res.render("prescription", { error: "" });
-  console.log("prescription");
-};
-
-// View Attachments Controller
-export const viewAttachmentsCtrl = async (req, res) => {
-  res.render("attachments", { error: "" });
-  console.log("attachments");
-};
-
-// Request Appointment Controller
-export const requestAppoinmentCtrl = async (req, res, next) => {
-// res.render("appointment_submit_page", { error: "" });
-res.render("appointmentSubmit", { error: "" });
-  console.log("appointment_submit_page");
-};
-
-// Create Prescription Controller
-export const createPrescriptionCtrl = async (req, res) => {
-  res.render("createPrescription", { error: "" });
-  console.log("createPrescription");
-};
-
-//Student Appointments Controller
-export const studentAppointmentsCtrl = async (req, res) => {
-  res.render("studentAppointments", { error: "" });
-  console.log("Student appointments");
-};
-
-//Doctor Appointments Controller
-export const doctorAppointmentsCtrl = async (req, res) => {
-  res.render("doctorAppointments", { error: "" });
-  console.log("doctor appointments");
-};
-
-//Prescribe Controller
-export const prescribeCtrl = async (req, res) => {
-  res.render("prescribe", { error: "" });
-  console.log("prescribe");
 };

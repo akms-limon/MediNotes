@@ -1,12 +1,13 @@
 import bodyParser from "body-parser";
 import { config } from "dotenv";
 import express from "express";
-import connectToPostgres from "./database/db.js";
-import globalErrhandler from "./middlewares/globalHandler.js";
 import session from "express-session";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import connectToPostgres from "./database/db.js";
+import globalErrhandler from "./middlewares/globalHandler.js";
 import doctorRoutes from "./routes/doctor.js";
+import studentRoutes from "./routes/student.js"; // Import student routes
 import userRoutes from "./routes/users.js";
 const app = express();
 const port = 3000;
@@ -24,7 +25,7 @@ app.use(session({
 app.set("view engine", "ejs"); 
 config();
 
-app.use(express.static(__dirname, +"/public"));
+app.use(express.static(__dirname + "/public")); // Ensure static files are served correctly
 //
 // // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,6 +41,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", userRoutes);
 
 app.use('/doctor', doctorRoutes);
+app.use('/student', studentRoutes); // Use student routes
 
 //gehandle
 app.use(globalErrhandler);
