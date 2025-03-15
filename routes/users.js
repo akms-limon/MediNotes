@@ -1,7 +1,10 @@
 import express from "express";
-import { doctorDashboardCtrl, loginCtrl, signupCtrl, studentDashboardCtrl,adminDashboardCtrl,
-  medicalHistoryCtrl,viewAttachmentsCtrl,viewPrescriptionsCtrl,requestAppoinmentCtrl ,
-  createPrescriptionCtrl, appoinmentsCtrl} from "../controllers/users.js";
+import { doctorDashboardCtrl, loginCtrl, signupCtrl, studentDashboardCtrl,
+  adminDashboardCtrl, medicalHistoryCtrl,viewAttachmentsCtrl,
+  viewPrescriptionsCtrl,requestAppoinmentCtrl, studentAppointmentsCtrl, 
+  doctorAppointmentsCtrl, createPrescriptionCtrl, doctorMedicalHistoryCtrl,
+  prescribeCtrl
+} from "../controllers/users.js";
 const userRoutes = express.Router();
 
 
@@ -38,7 +41,10 @@ userRoutes.get('/student-dashboard', studentDashboardCtrl);
 
 
 //GET/medical_history' (isAuth needed)
-userRoutes.get('/medical-history',medicalHistoryCtrl );
+userRoutes.get('/medical-history', medicalHistoryCtrl );
+
+//GET/doctor-medical-history' (isAuth needed)
+userRoutes.get('/doctor-medical-history', doctorMedicalHistoryCtrl );
 
 //GET/viewPrescriptions' (isAuth needed)
 userRoutes.get('/view-prescriptions',viewPrescriptionsCtrl );
@@ -49,8 +55,11 @@ userRoutes.get('/view-attachments',viewAttachmentsCtrl );
 //GET/request-appointment' (isAuth needed)
 userRoutes.get('/request-appoinment',requestAppoinmentCtrl );
 
-//GET/appoinments' (isAuth needed)
-userRoutes.get('/appoinments',  appoinmentsCtrl);
+//GET/student-appoinments' (isAuth needed)
+userRoutes.get('/student-appointments',  studentAppointmentsCtrl);
+
+//GET/doctor-appoinments' (isAuth needed)
+userRoutes.get('/doctor-appointments',  doctorAppointmentsCtrl);
 
 //GET/doctor-dashboard  (isAuth needed)
 userRoutes.get('/doctor-dashboard', doctorDashboardCtrl);
@@ -61,7 +70,7 @@ userRoutes.get('/create-prescription', createPrescriptionCtrl);
 //GET/admin-dashboard  (isAuth needed)
 userRoutes.get('/admin-dashboard', adminDashboardCtrl);
 
-//medical history
-
+//GET/prescribe (isAuth needed)
+userRoutes.get('/prescribe', prescribeCtrl);
 
 export default userRoutes;

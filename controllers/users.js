@@ -180,6 +180,12 @@ export const medicalHistoryCtrl = async (req, res) => {
   console.log("medical_history");
 };
 
+// Doctor Medical History Controller
+export const doctorMedicalHistoryCtrl = async (req, res) => {
+  res.render("doctorMedicalHistory", { error: "" });
+  console.log("doctor medical history");
+};
+
 // View Prescriptions Controller for student
 export const viewPrescriptionsCtrl = async (req, res) => {
   res.render("prescription", { error: "" });
@@ -205,8 +211,20 @@ export const createPrescriptionCtrl = async (req, res) => {
   console.log("createPrescription");
 };
 
-// Appointments Controller
-export const appoinmentsCtrl = async (req, res) => {
-  res.render("appoinments", { error: "" });
-  console.log("appointments");
+//Student Appointments Controller
+export const studentAppointmentsCtrl = async (req, res) => {
+  res.render("studentAppointments", { error: "" });
+  console.log("Student appointments");
+};
+
+//Doctor Appointments Controller
+export const doctorAppointmentsCtrl = async (req, res) => {
+  res.render("doctorAppointments", { error: "" });
+  console.log("doctor appointments");
+};
+
+//Prescribe Controller
+export const prescribeCtrl = async (req, res) => {
+  res.render("prescribe", { error: "" });
+  console.log("prescribe");
 };

@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointments</title>
-    <link rel="stylesheet" href="/public/css/appoinments.css">
+    <link rel="stylesheet" href="/public/css/doctorApppointments.css">
 </head>
 <body>
     <!-- Include the patient navbar -->
-    <%- include('partials/patientNavbar.ejs') %>
+    <%- include('partials/doctorNavbar.ejs') %>
 
     <div class="container">
         <h1>Appointments</h1>
@@ -46,13 +46,15 @@
                     <td>02:00 PM</td>
                     <td>Dr. Jane Smith</td>
                     <td>Blood Test</td>
-                    <td>Pending</td>
+                    <td>
+                        <button class="accept-button" onclick="updateStatus(this, 'Scheduled')">Accept</button>
+                        <button class="reject-button" onclick="removeRow(this)">Reject</button>
+                    </td>
                 </tr>
                 <!-- Add more rows as needed -->
             </tbody>
         </table>
     </div>
-    <button class="request-button" onclick="window.location.href='/request-appoinment'">Request Appointments</button>
     <script>
         function filterAppointments() {
             const filter = document.getElementById('appointmentFilter').value;
@@ -63,7 +65,7 @@
                 const status = rows[i].getElementsByTagName('td')[4].innerText;
                 if (filter === 'scheduled' && status !== 'Scheduled') {
                     rows[i].style.display = 'none';
-                } else if (filter === 'pending' && status !== 'Pending') {
+                } else if (filter === 'pending' && status === 'Scheduled') {
                     rows[i].style.display = 'none';
                 } else {
                     rows[i].style.display = '';
@@ -71,9 +73,16 @@
             }
         }
 
-        function requestAppointments() {
-            // Add your logic for requesting appointments here
-            alert('Request Appointments button clicked');
+        function updateStatus(button, status) {
+            const row = button.parentElement.parentElement;
+            row.getElementsByTagName('td')[4].innerText = status;
+            button.parentElement.removeChild(button.nextElementSibling);
+            button.parentElement.removeChild(button);
+        }
+
+        function removeRow(button) {
+            const row = button.parentElement.parentElement;
+            row.parentElement.removeChild(row);
         }
     </script>
 </body>

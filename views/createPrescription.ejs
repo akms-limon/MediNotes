@@ -7,9 +7,20 @@
     <link rel="stylesheet" href="/public/css/createPrescription.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <%- include('partials/doctorNavbar.ejs') %>
+    
     <div class="container">
         <h1>Create Prescription</h1>
         <form id="prescription-form">
+            <div class="form-group">
+                <label for="diagnosis">Diagnosis</label>
+                <input type="text" id="diagnosis" name="diagnosis" required>
+            </div>
+            <div class="form-group">
+                <label for="blood-pressure">Blood Pressure</label>
+                <input type="text" id="blood-pressure" name="bloodPressure" required>
+            </div>
             <div class="form-group">
                 <label>Medicines</label>
                 <div id="medicine-list" class="medicine-list">
