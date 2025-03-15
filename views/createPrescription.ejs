@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/public/css/createPrescription.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
+    <!Navigation Bar>
     <%- include('partials/doctorNavbar.ejs') %>
     
     <div class="container">
@@ -26,20 +26,20 @@
                 <div id="medicine-list" class="medicine-list">
                     <div class="medicine-item">
                         <select name="medicine[]" required>
-                            <option value="">-- Select Medicine --</option>
+                            <option value="">Select Medicine</option>
                             <option value="Paracetamol">Paracetamol</option>
                             <option value="Ibuprofen">Ibuprofen</option>
                             <option value="Amoxicillin">Amoxicillin</option>
                         </select>
                         <select name="dosage[]" required>
-                            <option value="">-- Select Dosage --</option>
+                            <option value="">Select Dosage</option>
                             <option value="250mg">250mg</option>
                             <option value="500mg">500mg</option>
                             <option value="750mg">750mg</option>
                             <option value="1000mg">1000mg</option>
                         </select>
                         <select name="duration[]" required>
-                            <option value="">-- Select Duration --</option>
+                            <option value="">Select Duration</option>
                             <option value="3 days">3 days</option>
                             <option value="5 days">5 days</option>
                             <option value="7 days">7 days</option>
@@ -51,7 +51,7 @@
                             <option value="Continuous">Continuous</option>
                         </select>
                         <select name="timesPerDay[]" required>
-                            <option value="">-- Times per Day --</option>
+                            <option value="">Times per Day</option>
                             <option value="1">0 + 1 + 0</option>
                             <option value="2">0 + 0 + 1</option>
                             <option value="3">1 + 0 + 0</option>
@@ -60,6 +60,11 @@
                             <option value="7">0 + 1 + 1</option>
                             <option value="4">1 + 1 + 1</option>
                         </select>
+                        <select name="prepostmeal" id="prepostmeal">
+                            <option value="">Pre Post Meal</option>
+                            <option value="Before Meal">Before Meal</option>
+                            <option value="After Meal">After Meal</option>
+                        </select>
                         <button type="button" onclick="removeMedicineRow(this)">Remove</button>
                     </div>
                 </div>
@@ -67,7 +72,7 @@
             </div>
 
             <div class="form-group">
-                <label for="notes">Additional Notes</label>
+                <label for="notes">Instructions</label>
                 <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional instructions"></textarea>
             </div>
 
@@ -85,20 +90,20 @@
 
             medicineItem.innerHTML = `
                 <select name="medicine[]" required>
-                    <option value="">-- Select Medicine --</option>
+                    <option value="">Select Medicine</option>
                     <option value="Paracetamol">Paracetamol</option>
                     <option value="Ibuprofen">Ibuprofen</option>
                     <option value="Amoxicillin">Amoxicillin</option>
                 </select>
                 <select name="dosage[]" required>
-                    <option value="">-- Select Dosage --</option>
+                    <option value="">Select Dosage</option>
                     <option value="250mg">250mg</option>
                     <option value="500mg">500mg</option>
                     <option value="750mg">750mg</option>
                     <option value="1000mg">1000mg</option>
                 </select>
                 <select name="duration[]" required>
-                    <option value="">-- Select Duration --</option>
+                    <option value="">Select Duration</option>
                     <option value="3 days">3 days</option>
                     <option value="5 days">5 days</option>
                     <option value="7 days">7 days</option>
@@ -110,7 +115,7 @@
                     <option value="Continuous">Continuous</option>
                 </select>
                 <select name="timesPerDay[]" required>
-                    <option value="">-- Times per Day --</option>
+                    <option value="">Times per Day</option>
                     <option value="1">0 + 1 + 0</option>
                     <option value="2">0 + 0 + 1</option>
                     <option value="3">1 + 0 + 0</option>
@@ -118,6 +123,11 @@
                     <option value="6">1 + 1 + 0</option>
                     <option value="7">0 + 1 + 1</option>
                     <option value="4">1 + 1 + 1</option>
+                </select>
+                <select name="prepostmeal" id="prepostmeal">
+                    <option value="">Pre Post Meal</option>
+                    <option value="Before Meal">Before Meal</option>
+                    <option value="After Meal">After Meal</option>
                 </select>
                 <button type="button" onclick="removeMedicineRow(this)">Remove</button>
             `;
