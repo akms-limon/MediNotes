@@ -44,6 +44,23 @@
                 <input type="date" id="appointment-date" name="appointmentDate" required>
             </div>
 
+            <!-- Appointment Time Dropdown -->
+            <div class="form-group">
+                <label for="appointment-time">Appointment Time</label>
+                <select id="appointment-time" name="appointmentTime" required>
+                    <option value="">-- Select Time --</option>
+                    <option value="09:00">09:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">01:00 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="15:00">03:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="17:00">05:00 PM</option>
+                </select>
+            </div>
+
             <!-- Reason for Appointment Textbox -->
             <div class="form-group">
                 <label for="reason">Reason for Appointment</label>
@@ -67,7 +84,7 @@
             const data = Object.fromEntries(formData.entries());
 
             // Display the submitted data (for demonstration)
-            alert(`Appointment Request Submitted:\n\nDoctor Category: ${data.doctorCategory}\nDoctor: ${data.selectDoctor}\nAppointment Date: ${data.appointmentDate}\nReason: ${data.reason}`);
+            alert(`Appointment Request Submitted:\n\nDoctor Category: ${data.doctorCategory}\nDoctor: ${data.selectDoctor}\nAppointment Date: ${data.appointmentDate}\nAppointment Time: ${data.appointmentTime}\nReason: ${data.reason}`);
 
             // You can send the data to a server here using fetch or axios
         });

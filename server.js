@@ -38,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 // commment
 //new cmnt
 app.use("/", userRoutes);
+
 app.use('/doctor', doctorRoutes);
 
 //gehandle

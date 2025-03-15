@@ -1,7 +1,7 @@
 import express from "express";
 import { doctorDashboardCtrl, loginCtrl, signupCtrl, studentDashboardCtrl,adminDashboardCtrl,
   medicalHistoryCtrl,viewAttachmentsCtrl,viewPrescriptionsCtrl,requestAppoinmentCtrl ,
-  createPrescriptionCtrl} from "../controllers/users.js";
+  createPrescriptionCtrl, appoinmentsCtrl} from "../controllers/users.js";
 const userRoutes = express.Router();
 
 
@@ -48,6 +48,9 @@ userRoutes.get('/view-attachments',viewAttachmentsCtrl );
 
 //GET/request-appointment' (isAuth needed)
 userRoutes.get('/request-appoinment',requestAppoinmentCtrl );
+
+//GET/appoinments' (isAuth needed)
+userRoutes.get('/appoinments',  appoinmentsCtrl);
 
 //GET/doctor-dashboard  (isAuth needed)
 userRoutes.get('/doctor-dashboard', doctorDashboardCtrl);

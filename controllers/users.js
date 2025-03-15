@@ -204,3 +204,9 @@ export const createPrescriptionCtrl = async (req, res) => {
   res.render("createPrescription", { error: "" });
   console.log("createPrescription");
 };
+
+// Appointments Controller
+export const appoinmentsCtrl = async (req, res) => {
+  res.render("appoinments", { error: "" });
+  console.log("appointments");
+};
