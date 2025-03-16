@@ -9,8 +9,9 @@ userRoutes.get("/", (req, res) => {
 });
 
 userRoutes.get("/login", (req, res) => {
+  const error = "";
   res.render("login", {
-    error: "",
+    error,
   });
 });
 
@@ -18,6 +19,7 @@ userRoutes.get("/login", (req, res) => {
 userRoutes.get("/signup", (req, res) => {
   res.render("signup", {
     error: "",
+    formData: {}
   });
 });
 

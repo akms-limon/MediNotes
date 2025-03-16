@@ -112,14 +112,37 @@
                         const timesResponse = await fetch(`/doctor/available-times?doctorId=${doctorId}&date=${appointmentDate}`);
                         if (!timesResponse.ok) throw new Error('Failed to fetch available times');
                         const times = await timesResponse.json();
-                        times.forEach(time => {
+                        
+                        // Check if no times are available
+                        if (times.length === 0) {
                             const option = document.createElement('option');
-                            option.value = time;
-                            option.textContent = time;
+                            option.value = "";
+                            option.textContent = "No available time slots for this date";
+                            option.disabled = true;
                             availableTimesSelect.appendChild(option);
-                        });
+                        } else {
+                            // Sort times chronologically before displaying
+                            times.sort().forEach(time => {
+                                const option = document.createElement('option');
+                                option.value = time;
+                                
+                                // Format time for display (convert 24h to 12h format)
+                                const [hours, minutes] = time.split(':');
+                                const hour = parseInt(hours);
+                                const ampm = hour >= 12 ? 'PM' : 'AM';
+                                const displayHour = hour > 12 ? hour - 12 : hour;
+                                
+                                option.textContent = `${displayHour}:${minutes} ${ampm}`;
+                                availableTimesSelect.appendChild(option);
+                            });
+                        }
                     } catch (error) {
                         console.error('Error fetching available times:', error);
+                        const option = document.createElement('option');
+                        option.value = "";
+                        option.textContent = "Error loading time slots";
+                        option.disabled = true;
+                        availableTimesSelect.appendChild(option);
                     }
                 }
             }
@@ -129,13 +152,20 @@
 
             // Handle form submission
             document.getElementById('appointment-form').addEventListener('submit', async function (event) {
-                event.preventDefault(); // Prevent form from submitting
+                event.preventDefault();
 
                 // Get form data
                 const formData = new FormData(event.target);
                 const data = Object.fromEntries(formData.entries());
+                
+                console.log("Submitting appointment data:", data);
 
-                // Send data to server
+                // Validate data before sending
+                if (!data.selectDoctor || !data.appointmentDate || !data.appointmentTime || !data.reason) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+
                 try {
                     const response = await fetch('/student/appointment-create', {
                         method: 'POST',
@@ -145,16 +175,23 @@
                         body: JSON.stringify(data)
                     });
 
+                    const result = await response.json();
+
                     if (response.ok) {
                         alert('Appointment Request Submitted Successfully');
-                        // Refresh the page
-                        window.location.reload();
+                        window.location.href = '/student/appointments'; // Redirect to appointments page
                     } else {
-                        alert('Failed to Submit Appointment Request');
+                        // If session expired
+                        if (response.status === 401) {
+                            alert('Your session has expired. Please log in again.');
+                            window.location.href = '/login'; // Redirect to login
+                        } else {
+                            alert(`Failed to Submit Appointment Request: ${result.error || 'Unknown error'}`);
+                        }
                     }
                 } catch (error) {
                     console.error('Error submitting appointment request:', error);
-                    alert('Failed to Submit Appointment Request');
+                    alert('Failed to Submit Appointment Request: Network Error');
                 }
             });
         });

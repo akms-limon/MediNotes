@@ -17,6 +17,7 @@
         <div class="filter">
             <label for="appointmentFilter">Filter Appointments:</label>
             <select id="appointmentFilter" onchange="filterAppointments()">
+                <option value="all">All Appointments</option>
                 <option value="scheduled">Scheduled Appointments</option>
                 <option value="pending">Pending Appointments</option>
             </select>
@@ -34,46 +35,47 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2025-03-20</td>
-                    <td>10:00 AM</td>
-                    <td>Dr. John Doe</td>
-                    <td>Routine Checkup</td>
-                    <td>Scheduled</td>
-                </tr>
-                <tr>
-                    <td>2025-03-22</td>
-                    <td>02:00 PM</td>
-                    <td>Dr. Jane Smith</td>
-                    <td>Blood Test</td>
-                    <td>Pending</td>
-                </tr>
-                <!-- Add more rows as needed -->
+                <% if (locals.appointments && appointments.length > 0) { %>
+                    <% appointments.forEach(appointment => { %>
+                        <tr class="appointment-row" data-status="<%= appointment.status ? 'Scheduled' : 'Pending' %>">
+                            <td><%= new Date(appointment.appointmentdate).toLocaleDateString() %></td>
+                            <td><%= appointment.appointmenttime %></td>
+                            <td><%= appointment.doctorname %></td>
+                            <td><%= appointment.reason %></td>
+                            <td><%= appointment.status ? 'Scheduled' : 'Pending' %></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5" class="no-appointments">No appointments found</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
+        
+        <% if (locals.error && error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
     </div>
     <button class="request-button" onclick="window.location.href='/student/request-appointment'">Request Appointments</button>
     <script>
         function filterAppointments() {
             const filter = document.getElementById('appointmentFilter').value;
-            const table = document.getElementById('appointmentsTable');
-            const rows = table.getElementsByTagName('tr');
+            const rows = document.querySelectorAll('.appointment-row');
 
-            for (let i = 1; i < rows.length; i++) {
-                const status = rows[i].getElementsByTagName('td')[4].innerText;
-                if (filter === 'scheduled' && status !== 'Scheduled') {
-                    rows[i].style.display = 'none';
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                
+                if (filter === 'all') {
+                    row.style.display = '';
+                } else if (filter === 'scheduled' && status !== 'Scheduled') {
+                    row.style.display = 'none';
                 } else if (filter === 'pending' && status !== 'Pending') {
-                    rows[i].style.display = 'none';
+                    row.style.display = 'none';
                 } else {
-                    rows[i].style.display = '';
+                    row.style.display = '';
                 }
-            }
-        }
-
-        function requestAppointments() {
-            // Add your logic for requesting appointments here
-            alert('Request Appointments button clicked');
+            });
         }
     </script>
 </body>

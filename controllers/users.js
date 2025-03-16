@@ -18,23 +18,56 @@ export const signupCtrl = async (req, res, next) => {
   const { Id, fullname, email, password, role, specialization } = req.body;
 
   if (!Id || !fullname || !email || !password || !role || (role === "doctor" && !specialization)) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.render("signup", { 
+      error: "All fields are required",
+      formData: req.body
+    });
   }
 
   try {
-    // Check if Id or email already exists
-    const userFound = await pool.query(
-      "SELECT * FROM student WHERE email = $1 OR studentid = $2",
-      [email, Id]
+    // Check if email exists in either table (but use separate queries)
+    const studentEmailCheck = await pool.query(
+      "SELECT * FROM student WHERE email = $1",
+      [email]
     );
 
-    const doctorFound = await pool.query(
-      "SELECT * FROM doctor WHERE email = $1 OR doctorid = $2",
-      [email, Id]
+    const doctorEmailCheck = await pool.query(
+      "SELECT * FROM doctor WHERE email = $1",
+      [email]
     );
 
-    if (userFound.rows.length > 0 || doctorFound.rows.length > 0) {
-      return res.status(400).json({ error: "Email or ID is already taken" });
+    if (studentEmailCheck.rows.length > 0 || doctorEmailCheck.rows.length > 0) {
+      return res.render("signup", { 
+        error: "Email is already taken",
+        formData: req.body
+      });
+    }
+
+    // Check ID only in the relevant table based on role
+    if (role === "student") {
+      const studentIdCheck = await pool.query(
+        "SELECT * FROM student WHERE studentid = $1",
+        [Id]
+      );
+
+      if (studentIdCheck.rows.length > 0) {
+        return res.render("signup", { 
+          error: "Student ID is already taken",
+          formData: req.body
+        });
+      }
+    } else if (role === "doctor") {
+      const doctorIdCheck = await pool.query(
+        "SELECT * FROM doctor WHERE doctorid = $1",
+        [Id]
+      );
+
+      if (doctorIdCheck.rows.length > 0) {
+        return res.render("signup", { 
+          error: "Doctor ID is already taken",
+          formData: req.body
+        });
+      }
     }
 
     // Hash password
@@ -53,14 +86,20 @@ export const signupCtrl = async (req, res, next) => {
         [Id, fullname, email, passwordHashed, 1, specialization]
       );
     } else {
-      return res.status(400).json({ error: "Invalid role specified" });
+      return res.render("signup", { 
+        error: "Invalid role specified",
+        formData: req.body
+      });
     }
 
-    res.render("login", { error: "" });
+    res.render("login", { error: "", formData: {} });
     console.log("User registered successfully");
   } catch (error) {
     console.error("Database error:", error.message);
-    next(error); // Pass error to Express error handler
+    res.render("signup", { 
+      error: "An error occurred during registration. Please try again.",
+      formData: req.body
+    });
   }
 };
 
@@ -70,7 +109,7 @@ export const loginCtrl = async (req, res) => {
 
   // Check if fields are empty
   if (!email || !password) {
-    return res.render("../views/login", { error: "All fields are required" });
+    return res.render("login", { error: "All fields are required" });
   }
 
   try {
@@ -96,13 +135,13 @@ export const loginCtrl = async (req, res) => {
       user = doctorFound.rows[0];
       role = "doctor";
     } else {
-      return res.render("../views/login", { error: "Invalid login credentials" });
+      return res.render("login", { error: "Invalid login credentials" });
     }
 
     // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.render("../views/login", { error: "Invalid login credentials" });
+      return res.render("login", { error: "Invalid login credentials" });
     }
 
     // Save the user ID and role in the session
@@ -118,7 +157,7 @@ export const loginCtrl = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    return res.json({ error: "An error occurred while logging in the user." });
+    return res.render("login", { error: "An error occurred while logging in. Please try again." });
   }
 };
 
