@@ -1,5 +1,5 @@
 import express from 'express';
-import { createPrescriptionCtrl, doctorAppointmentsCtrl, doctorDashboardCtrl, doctorMedicalHistoryCtrl, getAvailableTimes, getDoctorCategories, getDoctorsByCategory, prescribeCtrl, prescriptionCreateCtrl, prescriptionReadCtrl } from '../controllers/doctor.js';
+import { acceptAppointmentCtrl, createPrescriptionCtrl, doctorAppointmentsCtrl, doctorDashboardCtrl, doctorMedicalHistoryCtrl, getAvailableTimes, getDoctorCategories, getDoctorsByCategory, getStudentDataCtrl, prescribeCtrl, prescriptionCreateCtrl, prescriptionReadCtrl, rejectAppointmentCtrl } from '../controllers/doctor.js';
 
 const doctorRoutes = express.Router();
 
@@ -16,11 +16,20 @@ doctorRoutes.get('/medical-history', doctorMedicalHistoryCtrl );
 //GET/doctor-appoinments' (isAuth needed)
 doctorRoutes.get('/appointments', doctorAppointmentsCtrl);
 
+// POST /appointments/:appointmentId/accept
+doctorRoutes.post('/appointments/:appointmentId/accept', acceptAppointmentCtrl);
+
+// POST /appointments/:appointmentId/reject
+doctorRoutes.post('/appointments/:appointmentId/reject', rejectAppointmentCtrl);
+
 //GET/create-prescription  (isAuth needed)
 doctorRoutes.get('/create-prescription', createPrescriptionCtrl);
 
 //GET/prescribe (isAuth needed)
 doctorRoutes.get('/prescribe', prescribeCtrl);
+
+// New route for fetching student data
+doctorRoutes.get('/student/:studentId', getStudentDataCtrl);
 
 // GET /doctor-categories
 doctorRoutes.get('/doctor-categories', getDoctorCategories);

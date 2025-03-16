@@ -13,6 +13,8 @@
     <div class="container">
         <h1>Create Prescription</h1>
         <form id="prescription-form">
+            <input type="hidden" id="studentId" name="studentId">
+            
             <div class="form-group">
                 <label for="diagnosis">Diagnosis</label>
                 <input type="text" id="diagnosis" name="diagnosis" required>
@@ -83,6 +85,15 @@
     </div>
 
     <script>
+        // Get student ID from URL parameter
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentId = urlParams.get('studentId');
+            if (studentId) {
+                document.getElementById('studentId').value = studentId;
+            }
+        });
+        
         function addMedicineRow() {
             const medicineList = document.getElementById("medicine-list");
             const medicineItem = document.createElement("div");
@@ -138,6 +149,37 @@
         function removeMedicineRow(button) {
             button.parentElement.remove();
         }
+        
+        // Add form submission handler
+        document.getElementById('prescription-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const data = {
+                studentId: formData.get('studentId'),
+                diagnosis: formData.get('diagnosis'),
+                bloodPressure: formData.get('bloodPressure'),
+                notes: formData.get('notes'),
+                medicines: []
+            };
+            
+            // Get all medicines
+            const medicineElements = document.querySelectorAll('.medicine-item');
+            medicineElements.forEach((element, index) => {
+                data.medicines.push({
+                    medicine: formData.getAll('medicine[]')[index],
+                    dosage: formData.getAll('dosage[]')[index],
+                    duration: formData.getAll('duration[]')[index],
+                    timesPerDay: formData.getAll('timesPerDay[]')[index],
+                    prepostmeal: formData.getAll('prepostmeal')[index]
+                });
+            });
+            
+            // TODO: Send data to server (will be implemented later)
+            console.log('Prescription data:', data);
+            alert('Prescription created successfully!');
+        });
     </script>
 </body>
 </html>

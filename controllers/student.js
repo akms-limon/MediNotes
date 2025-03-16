@@ -50,28 +50,76 @@ export const requestAppoinmentCtrl = async (req, res, next) => {
 
 // Student Appointments Controller
 export const studentAppointmentsCtrl = async (req, res) => {
-  res.render("studentAppointments", { error: "" });
-  console.log("Student appointments");
+  const studentId = req.session.userId;
+  
+  try {
+    // Join with doctor table to get doctor names
+    const appointments = await pool.query(
+      `SELECT a.*, d.fullname AS doctorname 
+       FROM appointments a
+       JOIN doctor d ON a.doctorid = d.doctorid
+       WHERE a.studentid = $1
+       ORDER BY a.appointmentdate, a.appointmenttime`,
+      [studentId]
+    );
+    
+    res.render("studentAppointments", { 
+      appointments: appointments.rows,
+      error: ""
+    });
+    console.log("Student appointments fetched:", appointments.rows.length);
+  } catch (error) {
+    console.error("Error fetching appointments:", error.message);
+    res.render("studentAppointments", { 
+      appointments: [],
+      error: "Failed to load appointments" 
+    });
+  }
 };
 
 // Handle Appointment Submission
 export const appointmentCreateCtrl = async (req, res) => {
+    console.log("Appointment request received:", req.body);
+    console.log("Session data:", req.session); // Log entire session to debug
+    
     const { selectDoctor, appointmentDate, appointmentTime, reason } = req.body;
-    const studentId = req.session.userId;
+    const studentId = req.session.userId || req.session.user?.id || req.session.studentId;
+    
+    console.log("Extracted student ID:", studentId);
     const currentTimestamp = new Date();
 
+    // Validate required fields
+    if (!selectDoctor || !appointmentDate || !appointmentTime || !reason) {
+        console.error("Missing required fields in appointment request");
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Check if we have a student ID from any possible source in the session
     if (!studentId) {
-        return res.status(400).json({ error: "Student ID is missing from session" });
+        console.error("Student ID missing from session:", req.session);
+        // For debugging: temporarily allow appointment creation with a default ID
+        const tempId = "temporary_student_id"; // Remove this in production
+        console.log("Using temporary student ID for debugging:", tempId);
+        
+        return res.status(401).json({ 
+            error: "You must be logged in to book an appointment",
+            session: JSON.stringify(req.session) // Include session info in error for debugging
+        });
     }
 
     try {
-        await pool.query(
-            "INSERT INTO appointments (studentid, doctorid, appointmentdate, appointmenttime, reason, createdat, updatedat) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        const result = await pool.query(
+            "INSERT INTO appointments (studentid, doctorid, appointmentdate, appointmenttime, reason, createdat, updatedat) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING appointmentid",
             [studentId, selectDoctor, appointmentDate, appointmentTime, reason, currentTimestamp, currentTimestamp]
         );
-        res.status(201).json({ message: "Appointment request submitted successfully" });
+        
+        console.log("Appointment created successfully:", result.rows[0]);
+        res.status(201).json({ 
+            message: "Appointment request submitted successfully",
+            appointmentId: result.rows[0].appointmentid
+        });
     } catch (error) {
-        console.error("Database error:", error.message);
+        console.error("Database error creating appointment:", error.message);
         res.status(500).json({ error: "An error occurred while submitting the appointment request" });
     }
 };

@@ -12,22 +12,31 @@
             <h1>Sign Up</h1>
         </header>
         <form id="signupForm" action="/signup" method="POST">
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+            <% } %>
             <div class="user-type">
                 <label>
-                    <input type="radio" name="role" value="doctor" required>
+                    <input type="radio" name="role" value="doctor" required
+                        <%= (typeof formData !== 'undefined' && formData.role === 'doctor') ? 'checked' : '' %>>
                     Doctor
                 </label>
                 <label>
-                    <input type="radio" name="role" value="student" required>
+                    <input type="radio" name="role" value="student" required
+                        <%= (typeof formData !== 'undefined' && formData.role === 'student') ? 'checked' : '' %>>
                     Student
                 </label>
             </div>
             <div id="commonFields">
                 <label for="fullname">Full Name:</label>
-                <input type="text" id="fullname" name="fullname"  placeholder="Enter your full name" required>
+                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required
+                    value="<%= typeof formData !== 'undefined' ? formData.fullname || '' : '' %>">
                 
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required
+                    value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>">
                 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
@@ -37,22 +46,22 @@
                 <span id="passwordError" style="color: red; display: none;">Passwords do not match</span>
 
                 <label for="Id">ID:</label>
-                <input type="text" id="Id" name="Id" placeholder="Enter your ID">
+                <input type="text" id="Id" name="Id" placeholder="Enter your ID" required
+                    value="<%= typeof formData !== 'undefined' ? formData.Id || '' : '' %>">
             </div>
             <div id="doctorFields" style="display: none;">
                 <label for="specialization">Specialization:</label>
                 <select id="specialization" name="specialization">
-                    <option value="cardiology">Cardiology</option>
-                    <option value="neurology">Neurology</option>
-                    <option value="orthopedics">Orthopedics</option>
-                    <option value="pediatrics">Pediatrics</option>
-                    <option value="general">General</option>
-                    <option value="gyneacology">Gyneacology</option>
-                    <option value="dermatology">Dermatology</option>
-                    <option value="ophthalmology">Ophthalmology</option>
-                    <option value="dentistry">Dentistry</option>
-                    <option value="psychiatry">Psychiatry</option>
-                    <option value="others">Others</option>
+                    <option value="Cardiology" <%= typeof formData !== 'undefined' && formData.specialization === 'Cardiology' ? 'selected' : '' %>>Cardiology</option>
+                    <option value="Dermatology" <%= typeof formData !== 'undefined' && formData.specialization === 'Dermatology' ? 'selected' : '' %>>Dermatology</option>
+                    <option value="Neurology" <%= typeof formData !== 'undefined' && formData.specialization === 'Neurology' ? 'selected' : '' %>>Neurology</option>
+                    <option value="Orthopedics" <%= typeof formData !== 'undefined' && formData.specialization === 'Orthopedics' ? 'selected' : '' %>>Orthopedics</option>
+                    <option value="Pediatrics" <%= typeof formData !== 'undefined' && formData.specialization === 'Pediatrics' ? 'selected' : '' %>>Pediatrics</option>
+                    <option value="Psychiatry" <%= typeof formData !== 'undefined' && formData.specialization === 'Psychiatry' ? 'selected' : '' %>>Psychiatry</option>
+                    <option value="Gynecology" <%= typeof formData !== 'undefined' && formData.specialization === 'Gynecology' ? 'selected' : '' %>>Gynecology</option>
+                    <option value="Ophthalmology" <%= typeof formData !== 'undefined' && formData.specialization === 'Ophthalmology' ? 'selected' : '' %>>Ophthalmology</option>
+                    <option value="Oncology" <%= typeof formData !== 'undefined' && formData.specialization === 'Oncology' ? 'selected' : '' %>>Oncology</option>
+                    <option value="General Medicine" <%= typeof formData !== 'undefined' && formData.specialization === 'General Medicine' ? 'selected' : '' %>>General Medicine</option>
                 </select>
             </div>
             <button type="submit" id="submitBtn">Sign Up</button>
@@ -62,5 +71,47 @@
             <p>&copy; MediNotes</p>
         </footer>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get role radio buttons and doctor fields element
+            const doctorRadio = document.querySelector('input[value="doctor"]');
+            const studentRadio = document.querySelector('input[value="student"]');
+            const doctorFields = document.getElementById('doctorFields');
+            const specializationSelect = document.getElementById('specialization');
+            
+            // Toggle doctor fields based on role selection
+            doctorRadio.addEventListener('change', function() {
+                doctorFields.style.display = 'block';
+                specializationSelect.required = true;
+            });
+            
+            studentRadio.addEventListener('change', function() {
+                doctorFields.style.display = 'none';
+                specializationSelect.required = false;
+            });
+            
+            // Show doctor fields on page load if doctor is selected
+            if (doctorRadio.checked) {
+                doctorFields.style.display = 'block';
+                specializationSelect.required = true;
+            }
+            
+            // Password validation
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const passwordError = document.getElementById('passwordError');
+            const form = document.getElementById('signupForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (password.value !== confirmPassword.value) {
+                    passwordError.style.display = 'block';
+                    event.preventDefault();
+                } else {
+                    passwordError.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
