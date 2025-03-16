@@ -1,5 +1,5 @@
 import express from 'express';
-import { createPrescriptionCtrl, doctorAppointmentsCtrl, doctorDashboardCtrl, doctorMedicalHistoryCtrl, prescribeCtrl, prescriptionCreateCtrl, prescriptionReadCtrl } from '../controllers/doctor.js';
+import { createPrescriptionCtrl, doctorAppointmentsCtrl, doctorDashboardCtrl, doctorMedicalHistoryCtrl, getAvailableTimes, getDoctorCategories, getDoctorsByCategory, prescribeCtrl, prescriptionCreateCtrl, prescriptionReadCtrl } from '../controllers/doctor.js';
 
 const doctorRoutes = express.Router();
 
@@ -21,6 +21,15 @@ doctorRoutes.get('/create-prescription', createPrescriptionCtrl);
 
 //GET/prescribe (isAuth needed)
 doctorRoutes.get('/prescribe', prescribeCtrl);
+
+// GET /doctor-categories
+doctorRoutes.get('/doctor-categories', getDoctorCategories);
+
+// GET /doctors
+doctorRoutes.get('/doctors', getDoctorsByCategory);
+
+// GET /available-times
+doctorRoutes.get('/available-times', getAvailableTimes);
 
 export default doctorRoutes;
 

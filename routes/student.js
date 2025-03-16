@@ -1,5 +1,5 @@
 import express from "express";
-import { medicalHistoryCtrl, requestAppoinmentCtrl, studentAppointmentsCtrl, studentDashboardCtrl, viewAttachmentsCtrl, viewPrescriptionsCtrl } from "../controllers/student.js";
+import { appointmentCreateCtrl, medicalHistoryCtrl, requestAppoinmentCtrl, studentAppointmentsCtrl, studentDashboardCtrl, viewAttachmentsCtrl, viewPrescriptionsCtrl } from "../controllers/student.js";
 const studentRoutes = express.Router();
 
 //GET/student-dashboard (isAuth needed)
@@ -19,5 +19,8 @@ studentRoutes.get('/request-appointment', requestAppoinmentCtrl );
 
 //GET/student-appointments' (isAuth needed)
 studentRoutes.get('/appointments', studentAppointmentsCtrl);
+
+// POST /api/appointments (isAuth needed)
+studentRoutes.post('/appointment-create', appointmentCreateCtrl);
 
 export default studentRoutes;
