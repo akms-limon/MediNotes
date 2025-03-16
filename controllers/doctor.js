@@ -78,3 +78,48 @@ export const prescriptionCreateCtrl = async (req, res) => {
   }
 };
 
+// Fetch Doctor Categories
+export const getDoctorCategories = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT DISTINCT specialization FROM doctor");
+    res.json(result.rows.map(row => row.specialization));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while fetching doctor categories." });
+  }
+};
+
+// Fetch Doctors by Category
+export const getDoctorsByCategory = async (req, res) => {
+  const { category } = req.query;
+  try {
+    const result = await pool.query("SELECT doctorid, fullname FROM doctor WHERE specialization = $1", [category]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while fetching doctors." });
+  }
+};
+
+// Fetch Available Times for a Doctor on a Specific Date
+export const getAvailableTimes = async (req, res) => {
+  const { doctorId, date } = req.query;
+  try {
+    const result = await pool.query(
+      "SELECT appointmenttime FROM appointments WHERE doctorid = $1 AND appointmentdate = $2",
+      [doctorId, date]
+    );
+    const bookedTimes = result.rows.map(row => row.appointmenttime);
+    const allTimes = [
+      "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", 
+      "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", 
+      "21:00"
+    ];
+    const availableTimes = allTimes.filter(time => !bookedTimes.includes(time));
+    res.json(availableTimes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while fetching available times." });
+  }
+};
+

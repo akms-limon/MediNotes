@@ -18,11 +18,7 @@
                 <label for="doctor-category">Doctor Category</label>
                 <select id="doctor-category" name="doctorCategory" required>
                     <option value="">-- Select Category --</option>
-                    <option value="Cardiologist">Cardiologist</option>
-                    <option value="Dermatologist">Dermatologist</option>
-                    <option value="Pediatrician">Pediatrician</option>
-                    <option value="Orthopedist">Orthopedist</option>
-                    <option value="General Physician">General Physician</option>
+                    <!-- Categories will be populated dynamically -->
                 </select>
             </div>
 
@@ -31,33 +27,22 @@
                 <label for="select-doctor">Select Doctor</label>
                 <select id="select-doctor" name="selectDoctor" required>
                     <option value="">-- Select Doctor --</option>
-                    <option value="Dr. John Doe">Dr. John Doe</option>
-                    <option value="Dr. Jane Smith">Dr. Jane Smith</option>
-                    <option value="Dr. Emily Brown">Dr. Emily Brown</option>
-                    <option value="Dr. Michael Lee">Dr. Michael Lee</option>
+                    <!-- Doctors will be populated dynamically -->
                 </select>
             </div>
 
             <!-- Appointment Date Input -->
             <div class="form-group">
                 <label for="appointment-date">Appointment Date</label>
-                <input type="date" id="appointment-date" name="appointmentDate" required>
+                <input type="date" id="appointment-date" name="appointmentDate" required min="<%= new Date().toISOString().split('T')[0] %>">
             </div>
 
-            <!-- Appointment Time Dropdown -->
+            <!-- Available Times Dropdown -->
             <div class="form-group">
-                <label for="appointment-time">Appointment Time</label>
-                <select id="appointment-time" name="appointmentTime" required>
+                <label for="available-times">Available Times</label>
+                <select id="available-times" name="appointmentTime" required>
                     <option value="">-- Select Time --</option>
-                    <option value="09:00">09:00 AM</option>
-                    <option value="10:00">10:00 AM</option>
-                    <option value="11:00">11:00 AM</option>
-                    <option value="12:00">12:00 PM</option>
-                    <option value="13:00">01:00 PM</option>
-                    <option value="14:00">02:00 PM</option>
-                    <option value="15:00">03:00 PM</option>
-                    <option value="16:00">04:00 PM</option>
-                    <option value="17:00">05:00 PM</option>
+                    <!-- Available times will be populated dynamically -->
                 </select>
             </div>
 
@@ -75,18 +60,103 @@
     </div>
 
     <script>
-        // Handle form submission
-        document.getElementById('appointment-form').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent form from submitting
+        document.addEventListener('DOMContentLoaded', async () => {
+            const doctorCategorySelect = document.getElementById('doctor-category');
+            const doctorSelect = document.getElementById('select-doctor');
+            const appointmentDateInput = document.getElementById('appointment-date');
+            const availableTimesSelect = document.getElementById('available-times');
 
-            // Get form data
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
+            // Fetch and populate doctor categories
+            try {
+                const categoriesResponse = await fetch('/doctor/doctor-categories');
+                if (!categoriesResponse.ok) throw new Error('Failed to fetch categories');
+                const categories = await categoriesResponse.json();
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    doctorCategorySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching doctor categories:', error);
+            }
 
-            // Display the submitted data (for demonstration)
-            alert(`Appointment Request Submitted:\n\nDoctor Category: ${data.doctorCategory}\nDoctor: ${data.selectDoctor}\nAppointment Date: ${data.appointmentDate}\nAppointment Time: ${data.appointmentTime}\nReason: ${data.reason}`);
+            // Fetch and populate doctors based on selected category
+            doctorCategorySelect.addEventListener('change', async () => {
+                const category = doctorCategorySelect.value;
+                doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+                if (category) {
+                    try {
+                        const doctorsResponse = await fetch(`/doctor/doctors?category=${category}`);
+                        if (!doctorsResponse.ok) throw new Error('Failed to fetch doctors');
+                        const doctors = await doctorsResponse.json();
+                        doctors.forEach(doctor => {
+                            const option = document.createElement('option');
+                            option.value = doctor.doctorid;
+                            option.textContent = doctor.fullname;
+                            doctorSelect.appendChild(option);
+                        });
+                    } catch (error) {
+                        console.error('Error fetching doctors:', error);
+                    }
+                }
+            });
 
-            // You can send the data to a server here using fetch or axios
+            // Fetch and populate available times based on selected doctor and date
+            async function fetchAvailableTimes() {
+                const doctorId = doctorSelect.value;
+                const appointmentDate = appointmentDateInput.value;
+                availableTimesSelect.innerHTML = '<option value="">-- Select Time --</option>';
+                if (doctorId && appointmentDate) {
+                    try {
+                        const timesResponse = await fetch(`/doctor/available-times?doctorId=${doctorId}&date=${appointmentDate}`);
+                        if (!timesResponse.ok) throw new Error('Failed to fetch available times');
+                        const times = await timesResponse.json();
+                        times.forEach(time => {
+                            const option = document.createElement('option');
+                            option.value = time;
+                            option.textContent = time;
+                            availableTimesSelect.appendChild(option);
+                        });
+                    } catch (error) {
+                        console.error('Error fetching available times:', error);
+                    }
+                }
+            }
+
+            doctorSelect.addEventListener('change', fetchAvailableTimes);
+            appointmentDateInput.addEventListener('change', fetchAvailableTimes);
+
+            // Handle form submission
+            document.getElementById('appointment-form').addEventListener('submit', async function (event) {
+                event.preventDefault(); // Prevent form from submitting
+
+                // Get form data
+                const formData = new FormData(event.target);
+                const data = Object.fromEntries(formData.entries());
+
+                // Send data to server
+                try {
+                    const response = await fetch('/student/appointment-create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        alert('Appointment Request Submitted Successfully');
+                        // Refresh the page
+                        window.location.reload();
+                    } else {
+                        alert('Failed to Submit Appointment Request');
+                    }
+                } catch (error) {
+                    console.error('Error submitting appointment request:', error);
+                    alert('Failed to Submit Appointment Request');
+                }
+            });
         });
     </script>
 </body>

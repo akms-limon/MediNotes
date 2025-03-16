@@ -53,3 +53,25 @@ export const studentAppointmentsCtrl = async (req, res) => {
   res.render("studentAppointments", { error: "" });
   console.log("Student appointments");
 };
+
+// Handle Appointment Submission
+export const appointmentCreateCtrl = async (req, res) => {
+    const { selectDoctor, appointmentDate, appointmentTime, reason } = req.body;
+    const studentId = req.session.userId;
+    const currentTimestamp = new Date();
+
+    if (!studentId) {
+        return res.status(400).json({ error: "Student ID is missing from session" });
+    }
+
+    try {
+        await pool.query(
+            "INSERT INTO appointments (studentid, doctorid, appointmentdate, appointmenttime, reason, createdat, updatedat) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+            [studentId, selectDoctor, appointmentDate, appointmentTime, reason, currentTimestamp, currentTimestamp]
+        );
+        res.status(201).json({ message: "Appointment request submitted successfully" });
+    } catch (error) {
+        console.error("Database error:", error.message);
+        res.status(500).json({ error: "An error occurred while submitting the appointment request" });
+    }
+};
