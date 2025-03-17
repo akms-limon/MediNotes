@@ -59,14 +59,22 @@ export const doctorAppointmentsCtrl = async (req, res) => {
   const doctorId = req.session.userId;
   
   try {
-    // Fetch appointments for this doctor without joining to patient table
-    const appointmentsResult = await pool.query(
-      "SELECT * FROM appointments WHERE doctorid = $1 ORDER BY appointmentdate, appointmenttime",
-      [doctorId]
+    // First, let's query the database to inspect the appointments table structure
+    const tableInfoResult = await pool.query(
+      "SELECT column_name FROM information_schema.columns WHERE table_name = 'appointments'"
     );
     
-    // Fetch corresponding patient names if needed
-    // Since we don't know the exact table name, we'll just use the patient ID
+    console.log("Appointments table columns:", tableInfoResult.rows.map(row => row.column_name));
+    
+    // Assuming the correct column is 'studentid' instead of 'patientid'
+    const appointmentsResult = await pool.query(
+      `SELECT a.*, s.fullname AS patientname 
+       FROM appointments a 
+       JOIN student s ON a.studentid = s.studentid 
+       WHERE a.doctorid = $1 
+       ORDER BY a.appointmentdate, a.appointmenttime`,
+      [doctorId]
+    );
     
     res.render("doctorAppointments", { 
       appointments: appointmentsResult.rows,
