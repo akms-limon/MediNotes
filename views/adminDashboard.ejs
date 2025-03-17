@@ -3,143 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Doctor Verification</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/css/adminDashboard.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Panel - Doctor Verification</h1>
-
-        <div class="search-bar">
-            <input type="text" id="search" placeholder="Search accepted doctor by name or ID...">
-            <button onclick="searchAcceptedDoctor()">Search</button>
+    <div class="navbar">
+        <div class="navbar-left">
+            <a href="#">Homepage</a>
         </div>
+        <div class="navbar-right">
+            <a href="/">Sign Out</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
 
-        <h2>Pending Doctors</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Specialization</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="pendingDoctorTable">
-                <!-- Example pending row -->
-                <tr>
-                    <td>101</td>
-                    <td>Dr. Jamal</td>
-                    <td>jamal@just.edu.bd</td>
-                    <td>Cardiologist</td>
-                    <td>Pending</td>
-                    <td>
-                        <button class="btn" onclick="verifyDoctor(101)">Verify</button>
-                        <button class="btn btn-secondary" onclick="rejectDoctor(101)">Reject</button>
-                    </td>
-                </tr>
-                <!-- Add more pending rows dynamically -->
-            </tbody>
-        </table>
-
-        <h2 id="searchResultsHeader" style="display: none;">Search Results</h2>
-        <table id="searchResultsTable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Specialization</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Search results will appear here dynamically -->
-            </tbody>
-        </table>
+        <h1>Admin Dashboard</h1>
+        
+        <div class="navbar-tabs">
+            <a href="#authorization" class="tab-link active" data-tab="authorization">Authorization</a>
+            <a href="#medicines" class="tab-link" data-tab="medicines">Medicines</a>
+        </div>
+        
+        <!-- Authorization Tab Content -->
+        <div id="authorization" class="tab-content">
+            <div class="dashboard-section">
+                <h3>Pending Doctor Requests</h3>
+                <% if (pendingDoctors && pendingDoctors.length > 0) { %>
+                    <table class="doctors-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Specialization</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pendingDoctors.forEach(doctor => { %>
+                                <tr>
+                                    <td><%= doctor.doctorid %></td>
+                                    <td><%= doctor.fullname %></td>
+                                    <td><%= doctor.email %></td>
+                                    <td><%= doctor.specialization %></td>
+                                    <td class="action-buttons">
+                                        <button class="approve-btn" data-id="<%= doctor.doctorid %>">Approve</button>
+                                        <button class="reject-btn" data-id="<%= doctor.doctorid %>">Reject</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No pending doctor requests</p>
+                <% } %>
+            </div>
+        </div>
+        
+        <!-- Medicines Tab Content -->
+        <div id="medicines" class="tab-content">
+            <div class="dashboard-section">
+                <h3>Medicines Management</h3>
+                <p>Medicine management section. Content will be added soon.</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        // function verifyDoctor(doctorId) {
-        //     console.log(`Verify button clicked for doctor with ID ${doctorId}`);
-        //     alert(`Doctor with ID ${doctorId} verified.`);
-        //     // Implement API call or functionality to verify doctor here
-        // }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab navigation
+            document.querySelectorAll('.tab-link').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-link').forEach(tabLink => {
+                        tabLink.classList.remove('active');
+                    });
+                    
+                    // Show selected tab content and mark tab as active
+                    document.getElementById(tabId).classList.add('active');
+                    this.classList.add('active');
+                });
+            });
 
-        // function rejectDoctor(doctorId) {
-        //     console.log(`Reject button clicked for doctor with ID ${doctorId}`);
-        //     alert(`Doctor with ID ${doctorId} rejected.`);
-        //     // Implement API call or functionality to reject doctor here
-        // }
+            // Event listener for approve buttons
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const doctorId = this.getAttribute('data-id');
+                    approveDoctor(doctorId, this);
+                });
+            });
 
-        // function searchAcceptedDoctor() {
-        //     const searchValue = document.getElementById('search').value.toLowerCase();
-        //     console.log(`Search initiated for accepted doctors with query: "${searchValue}"`);
-
-        //     const resultsTable = document.getElementById('searchResultsTable');
-        //     const resultsHeader = document.getElementById('searchResultsHeader');
-        //     const resultsBody = resultsTable.querySelector('tbody');
-
-        //     // Clear previous results
-        //     resultsBody.innerHTML = '';
-
-        //     // Simulate fetching accepted doctors (replace with actual API call if necessary)
-        //     const acceptedDoctors = [
-        //         { id: 201, name: 'Dr. Shamim', email: 'shamim@just.edu.bd', specialization: 'Dermatologist', status: 'Accepted' },
-        //         { id: 202, name: 'Dr. Arobindo', email: 'arobindo@just.edu.bd', specialization: 'Pediatrician', status: 'Accepted' }
-        //     ];
-
-        //     const filteredDoctors = acceptedDoctors.filter(doctor =>
-        //         doctor.name.toLowerCase().includes(searchValue) ||
-        //         doctor.id.toString().includes(searchValue)
-        //     );
-
-        //     if (filteredDoctors.length > 0) {
-        //         resultsHeader.style.display = 'block';
-        //         resultsTable.style.display = 'table';
-
-        //         filteredDoctors.forEach(doctor => {
-        //             const row = document.createElement('tr');
-
-        //             row.innerHTML = `
-        //                 <td>${doctor.id}</td>
-        //                 <td>${doctor.name}</td>
-        //                 <td>${doctor.email}</td>
-        //                 <td>${doctor.specialization}</td>
-        //                 <td>${doctor.status}</td>
-        //                 <td><button class="btn btn-secondary" onclick="removeSearchResult(${doctor.id})">Remove</button></td>
-        //             `;
-
-        //             resultsBody.appendChild(row);
-        //         });
-        //     } else {
-        //         alert('No matching accepted doctors found.');
-        //         resultsHeader.style.display = 'none';
-        //         resultsTable.style.display = 'none';
-        //     }
-        // }
-
-        // function removeSearchResult(doctorId) {
-        //     console.log(`Remove button clicked for search result with ID ${doctorId}`);
-        //     const row = Array.from(document.querySelectorAll('#searchResultsTable tbody tr')).find(tr =>
-        //         tr.cells[0].innerText == doctorId
-        //     );
-
-        //     if (row) {
-        //         row.remove();
-        //         console.log(`Doctor with ID ${doctorId} removed from search results.`);
-
-        //         // Hide results table if empty
-        //         const resultsBody = document.getElementById('searchResultsTable').querySelector('tbody');
-        //         if (resultsBody.children.length === 0) {
-        //             document.getElementById('searchResultsHeader').style.display = 'none';
-        //             document.getElementById('searchResultsTable').style.display = 'none';
-        //         }
-        //     }
-        // }
+            // Event listener for reject buttons
+            document.querySelectorAll('.reject-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const doctorId = this.getAttribute('data-id');
+                    rejectDoctor(doctorId, this);
+                });
+            });
+            
+            // Function to approve doctor
+            function approveDoctor(doctorId, buttonElement) {
+                fetch(`/approve-doctor/${doctorId}`, {  // Removed /admin prefix
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Doctor approved successfully');
+                        // Remove the row from the table
+                        buttonElement.closest('tr').remove();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while approving the doctor');
+                });
+            }
+            
+            // Function to reject doctor
+            function rejectDoctor(doctorId, buttonElement) {
+                fetch(`/reject-doctor/${doctorId}`, {  // Removed /admin prefix
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Doctor rejected successfully');
+                        // Remove the row from the table
+                        buttonElement.closest('tr').remove();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while rejecting the doctor');
+                });
+            }
+        });
     </script>
 </body>
 </html>

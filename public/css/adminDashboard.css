@@ -8,6 +8,41 @@ body {
     line-height: 1.6;
 }
 
+/* Navbar Styling */
+.navbar {
+    background-color: #2c3e50;
+    overflow: hidden;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    background-color: #3a506b;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-right {
+    float: right;
+}
+
+.navbar-left {
+    float: left;
+}
+
 .container {
     width: 90%;
     margin: 30px auto;
@@ -30,6 +65,69 @@ h2 {
     font-weight: 500;
     padding-bottom: 8px;
     border-bottom: 1px solid #e6ecf0;
+}
+
+/* Dashboard Section Styling */
+.dashboard-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Error Message Styling */
+.error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #fdf0ef;
+    border: 1px solid #fadbd8;
+    border-radius: 6px;
+}
+
+/* Action Buttons Styling */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.approve-btn, .reject-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.approve-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.approve-btn:hover {
+    background-color: #27ae60;
+}
+
+.reject-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.reject-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Doctor Table Styling */
+.doctors-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 table {
@@ -261,4 +359,35 @@ table tr:hover {
     .admin-actions a {
         min-width: 100%;
     }
+}
+
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+.navbar-tabs {
+    display: flex;
+    margin: 20px 0;
+    border-bottom: 1px solid #ccc;
+}
+.navbar-tabs a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+}
+.navbar-tabs a.active {
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+}
+.admin-info {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.admin-info p {
+    margin: 10px 0;
 }
