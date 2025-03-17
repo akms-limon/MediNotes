@@ -1,5 +1,5 @@
 import express from 'express';
-import { acceptAppointmentCtrl, createPrescriptionCtrl, doctorAppointmentsCtrl, doctorDashboardCtrl, doctorMedicalHistoryCtrl, getAvailableTimes, getDoctorCategories, getDoctorsByCategory, getMedicineDosagesCtrl, getStudentDataCtrl, prescribeCtrl, prescriptionCreateCtrl, prescriptionReadCtrl, rejectAppointmentCtrl, searchMedicinesCtrl } from '../controllers/doctor.js';
+import { acceptAppointmentCtrl, createPrescriptionCtrl, doctorAppointmentsCtrl, doctorDashboardCtrl, doctorMedicalHistoryCtrl, getAvailableTimes, getDoctorCategories, getDoctorsByCategory, getMedicineDosagesCtrl, getStudentDataCtrl, prescribeCtrl, prescriptionCreateCtrl, prescriptionReadCtrl, rejectAppointmentCtrl, searchMedicinesCtrl, viewStudentMedicalHistoryCtrl } from '../controllers/doctor.js';
 import { pool } from "../database/db.js"; // Add this import for the pool
 
 const doctorRoutes = express.Router();
@@ -56,6 +56,9 @@ doctorRoutes.get('/session-check', (req, res) => {
         res.status(401).json({ authenticated: false });
     }
 });
+
+// Add the new route for viewing student medical history
+doctorRoutes.get('/student-medical-history', viewStudentMedicalHistoryCtrl);
 
 // New routes for viewing prescriptions and attachments
 doctorRoutes.get('/view-prescription/:prescriptionId', async (req, res) => {

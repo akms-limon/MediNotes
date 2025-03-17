@@ -157,6 +157,24 @@ export const getStudentDataCtrl = async (req, res) => {
       studentInfo = null;
     }
     
+    // Try to get most recent blood pressure from prescription table
+    let bloodPressure = "Not recorded";
+    try {
+      const bpQuery = await pool.query(
+        "SELECT bloodpressure FROM prescription WHERE studentid = $1 ORDER BY date DESC LIMIT 1",
+        [studentId]
+      );
+      if (bpQuery.rows.length > 0 && bpQuery.rows[0].bloodpressure) {
+        bloodPressure = bpQuery.rows[0].bloodpressure;
+      } else if (studentInfo?.bloodpressure) {
+        // Fallback to basicinfo if available
+        bloodPressure = studentInfo.bloodpressure;
+      }
+    } catch (bpError) {
+      console.error("Error fetching blood pressure:", bpError);
+      // Keep default value
+    }
+    
     // Prepare the response
     res.json({ 
       success: true, 
@@ -171,9 +189,7 @@ export const getStudentDataCtrl = async (req, res) => {
         height: studentInfo?.height || "Not recorded",
         weight: studentInfo?.weight || "Not recorded",
         bloodGroup: studentInfo?.bloodgroup || "Not recorded",
-        bloodPressure: studentInfo?.bloodpressure || "Not recorded",
-        allergies: studentInfo?.allergies || "None",
-        medicalConditions: studentInfo?.medicalconditions || "None"
+        bloodPressure: bloodPressure
       }
     });
   } catch (error) {
@@ -462,6 +478,55 @@ export const getMedicineDosagesCtrl = async (req, res) => {
   } catch (error) {
     console.error("Error fetching medicine dosages:", error);
     res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// View a specific student's medical history
+export const viewStudentMedicalHistoryCtrl = async (req, res) => {
+  const { studentId } = req.query;
+  const doctorId = req.session.userId;
+  
+  try {
+    // First get student details
+    const studentResult = await pool.query(
+      "SELECT fullname, email, department FROM student WHERE studentid = $1",
+      [studentId]
+    );
+
+    if (studentResult.rows.length === 0) {
+      return res.status(404).render("doctorViewStudentHistory", { 
+        student: null,
+        prescriptions: [],
+        error: "Student not found" 
+      });
+    }
+
+    const student = studentResult.rows[0];
+    
+    // Fetch prescriptions for this student with doctor information
+    const prescriptionsResult = await pool.query(
+      `SELECT p.prescriptionid, p.date, d.fullname as doctorname, 
+              d.specialization, p.diagnosis, p.instruction 
+       FROM prescription p 
+       JOIN doctor d ON p.doctorid = d.doctorid 
+       WHERE p.studentid = $1 
+       ORDER BY p.date DESC`,
+      [studentId]
+    );
+    
+    res.render("doctorViewStudentHistory", { 
+      student: student,
+      prescriptions: prescriptionsResult.rows,
+      error: "" 
+    });
+    console.log("doctor viewing student medical history successfully");
+  } catch (error) {
+    console.error("Error fetching student prescription history:", error);
+    res.render("doctorViewStudentHistory", { 
+      student: null,
+      prescriptions: [],
+      error: "Failed to load prescription history: " + error.message 
+    });
   }
 };
 

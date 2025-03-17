@@ -6,7 +6,32 @@
     <title>Prescribe</title>
     <link rel="stylesheet" href="/css/prescribe.css">
     <style>
+        .patient-info-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 20px;
+        }
         
+        .patient-info {
+            width: 48%;
+            border-collapse: collapse;
+        }
+        
+        .patient-info td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(221, 221, 221, 0.3); /* Transparent border */
+        }
+        
+        .patient-info td:first-child {
+            font-weight: bold;
+            width: 150px;
+        }
+        
+        /* Add this to make table rows alternate colors for better readability with transparent borders */
+        .patient-info tr:nth-child(even) {
+            background-color: rgba(245, 245, 245, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -19,25 +44,51 @@
             <button type="submit">Search</button>
         </form>
         <div id="studentInfo" style="display: none;">
-            <h2>Student Information</h2>
-            <div class="info-container">
-                <div class="info-section">
-                    <h3>Basic Information</h3>
-                    <p><strong>Name:</strong> <span id="studentName"></span></p>
-                    <p><strong>Department:</strong> <span id="studentDepartment"></span></p>
-                    <p><strong>Email:</strong> <span id="studentEmail"></span></p>
-                    <p><strong>Phone:</strong> <span id="studentPhone"></span></p>
-                </div>
-                <div class="info-section">
-                    <h3>Medical Information</h3>
-                    <p><strong>Height:</strong> <span id="studentHeight"></span></p>
-                    <p><strong>Weight:</strong> <span id="studentWeight"></span></p>
-                    <p><strong>Blood Group:</strong> <span id="studentBloodGroup"></span></p>
-                    <p><strong>Blood Pressure:</strong> <span id="studentBloodPressure"></span></p>
-                    <p><strong>Allergies:</strong> <span id="studentAllergies"></span></p>
-                    <p><strong>Medical Conditions:</strong> <span id="studentMedicalConditions"></span></p>
-                </div>
+            <h2>Patient Information</h2>
+            
+            <!-- Two-column layout for patient information -->
+            <div class="patient-info-container">
+                <!-- Column 1: Personal Information -->
+                <table class="patient-info">
+                    <tr>
+                        <td>Patient Name:</td>
+                        <td id="studentName"></td>
+                    </tr>
+                    <tr>
+                        <td>Department:</td>
+                        <td id="studentDepartment"></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td id="studentEmail"></td>
+                    </tr>
+                    <tr>
+                        <td>Phone:</td>
+                        <td id="studentPhone"></td>
+                    </tr>
+                </table>
+                
+                <!-- Column 2: Medical Information -->
+                <table class="patient-info">
+                    <tr>
+                        <td>Height:</td>
+                        <td id="studentHeight"></td>
+                    </tr>
+                    <tr>
+                        <td>Weight:</td>
+                        <td id="studentWeight"></td>
+                    </tr>
+                    <tr>
+                        <td>Blood Group:</td>
+                        <td id="studentBloodGroup"></td>
+                    </tr>
+                    <tr>
+                        <td>Blood Pressure:</td>
+                        <td id="studentBloodPressure"></td>
+                    </tr>
+                </table>
             </div>
+            
             <div class="action-buttons">
                 <button onclick="viewMedicalHistory()">Medical History</button>
                 <button onclick="prescribeNow()">Prescribe Now</button>
@@ -70,19 +121,15 @@
                     console.log("Received data:", data); // Debug logging
                     
                     if (data.success) {
-                        // Basic info
+                        // Update the table cells with student information
                         document.getElementById('studentName').innerText = data.student.name || 'Not available';
                         document.getElementById('studentDepartment').innerText = data.student.department || 'Not available';
                         document.getElementById('studentEmail').innerText = data.student.email || 'Not available';
                         document.getElementById('studentPhone').innerText = data.student.phone || 'Not available';
-                        
-                        // Medical info
-                        document.getElementById('studentHeight').innerText = data.student.height;
-                        document.getElementById('studentWeight').innerText = data.student.weight;
-                        document.getElementById('studentBloodGroup').innerText = data.student.bloodGroup;
-                        document.getElementById('studentBloodPressure').innerText = data.student.bloodPressure;
-                        document.getElementById('studentAllergies').innerText = data.student.allergies;
-                        document.getElementById('studentMedicalConditions').innerText = data.student.medicalConditions;
+                        document.getElementById('studentHeight').innerText = data.student.height || 'Not recorded';
+                        document.getElementById('studentWeight').innerText = data.student.weight || 'Not recorded';
+                        document.getElementById('studentBloodGroup').innerText = data.student.bloodGroup || 'Not recorded';
+                        document.getElementById('studentBloodPressure').innerText = data.student.bloodPressure || 'Not recorded';
                         
                         document.getElementById('studentInfo').style.display = 'block';
                         currentStudentId = data.student.id;
@@ -99,7 +146,7 @@
 
         function viewMedicalHistory() {
             if (currentStudentId) {
-                window.location.href = `/student/medical-history?studentId=${currentStudentId}`;
+                window.location.href = `/doctor/student-medical-history?studentId=${currentStudentId}`;
             }
         }
 
