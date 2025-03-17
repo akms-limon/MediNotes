@@ -1,77 +1,160 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f5f8fa;
     margin: 0;
     padding: 0;
-    background-color: lightgreen;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+/* Navigation Bar Styling */
+.navbar {
+    background-color: #2c3e50;
+    overflow: hidden;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.navbar a:hover {
+    background-color: #3a506b;
+    transform: translateY(-2px);
+}
+
+.navbar-right {
+    float: right;
+}
+
+.navbar-left {
+    float: left;
 }
 
 .container {
-    max-width: 400px;
-    margin: 50px auto;
-    background: white;
+    max-width: 550px;
+    margin: 60px auto;
+    padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background-color: white;
 }
 
 header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 h1 {
-    color: #333333;
+    color: #3498db;
+    font-weight: 500;
+    margin-bottom: 10px;
 }
 
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 18px;
 }
 
 label {
-    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #34495e;
 }
 
-input, button {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+input, button, select {
     width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+input:focus, select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 button {
-    background-color: #007BFF;
+    background-color: #3498db;
     color: white;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 10px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .user-type {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+}
+
+.user-type label {
+    display: inline;
+    margin-right: 20px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.user-type input {
+    width: auto;
+    margin-right: 8px;
+    cursor: pointer;
 }
 
 footer {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 14px;
-    color: #666666;
+    color: #7f8c8d;
 }
 
 .error-message {
-    color: #ff3333;
-    background-color: #ffe6e6;
-    border: 1px solid #ff9999;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    color: #e74c3c;
+    background-color: #fdf0ef;
+    border: 1px solid #fadbd8;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
     text-align: center;
+    font-size: 15px;
+}
+
+/* Add form-group styling from createPrescription.css */
+.form-group {
+    margin-bottom: 18px;
+}
+
+#commonFields, #doctorFields {
+    margin-bottom: 18px;
+    padding: 15px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }

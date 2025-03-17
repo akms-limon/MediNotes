@@ -17,6 +17,7 @@
         <div class="filter">
             <label for="appointmentFilter">Filter Appointments:</label>
             <select id="appointmentFilter" onchange="filterAppointments()">
+                <option value="all">All Appointments</option>
                 <option value="scheduled">Scheduled Appointments</option>
                 <option value="pending">Pending Appointments</option>
             </select>
@@ -43,7 +44,7 @@
                         <tr data-id="<%= appointment.appointmentid %>">
                             <td><%= new Date(appointment.appointmentdate).toLocaleDateString() %></td>
                             <td><%= appointment.appointmenttime %></td>
-                            <td><%= appointment.patientid %></td>
+                            <td><%= appointment.patientname || 'Unknown' %></td>
                             <td><%= appointment.reason || 'Not specified' %></td>
                             <td>
                                 <% if (appointment.status) { %>
@@ -65,7 +66,9 @@
     </div>
     <script>
         window.onload = function() {
-            filterAppointments();
+            // Set filter to "all" initially to show all appointments
+            document.getElementById('appointmentFilter').value = 'all';
+            // No need to call filterAppointments() here since we want to show all initially
         };
         
         function filterAppointments() {
@@ -81,7 +84,9 @@
                 const status = statusCell.textContent.trim();
                 const isScheduled = status === 'Scheduled';
                 
-                if (filter === 'scheduled' && !isScheduled) {
+                if (filter === 'all') {
+                    rows[i].style.display = ''; // Show all rows
+                } else if (filter === 'scheduled' && !isScheduled) {
                     rows[i].style.display = 'none';
                 } else if (filter === 'pending' && isScheduled) {
                     rows[i].style.display = 'none';
