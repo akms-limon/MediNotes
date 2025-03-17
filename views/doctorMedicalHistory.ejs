@@ -12,35 +12,40 @@
     <div class="container">
         <h1>Doctor's Prescription History</h1>
 
+        <% if (error && error.length > 0) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
         <table>
             <thead>
                 <tr>
                     <th>Prescribed Date</th>
                     <th>Patient Name</th>
                     <th>Diagnosis</th>
-                    <th>Notes</th>
+                    <th>Instructions</th>
                     <th>Prescription</th>
                     <th>Attachments</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2025-02-04</td>
-                    <td>John Doe</td>
-                    <td>Flu</td>
-                    <td>Take rest and drink fluids</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
-                <tr>
-                    <td>2025-01-20</td>
-                    <td>Jane Smith</td>
-                    <td>Allergy</td>
-                    <td>Use antihistamines as needed</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
-                <!-- Add more rows as needed -->
+                <% if (locals.prescriptions && prescriptions.length > 0) { %>
+                    <% prescriptions.forEach(prescription => { %>
+                        <tr>
+                            <td><%= new Date(prescription.date).toLocaleDateString() %></td>
+                            <td><%= prescription.patientname %></td>
+                            <td><%= prescription.diagnosis %></td>
+                            <td><%= prescription.instruction %></td>
+                            <td class="actions"><a href="/doctor/view-prescription/<%= prescription.prescriptionid %>">View</a></td>
+                            <td class="actions"><a href="/doctor/view-attachments/<%= prescription.prescriptionid %>">View</a></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="no-records">No prescription history found</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>

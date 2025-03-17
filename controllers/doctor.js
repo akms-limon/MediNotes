@@ -26,8 +26,32 @@ export const doctorDashboardCtrl = async (req, res) => {
 
 // Doctor Medical History Controller
 export const doctorMedicalHistoryCtrl = async (req, res) => {
-  res.render("doctorMedicalHistory", { error: "" });
-  console.log("doctor medical history");
+  const doctorId = req.session.userId;
+  
+  try {
+    // Fetch prescriptions created by this doctor
+    const prescriptionsResult = await pool.query(
+      `SELECT p.prescriptionid, p.date, s.fullname as patientname, 
+              p.diagnosis, p.instruction 
+       FROM prescription p 
+       JOIN student s ON p.studentid = s.studentid 
+       WHERE p.doctorid = $1 
+       ORDER BY p.date DESC`,
+      [doctorId]
+    );
+    
+    res.render("doctorMedicalHistory", { 
+      prescriptions: prescriptionsResult.rows,
+      error: "" 
+    });
+    console.log("doctor medical history loaded successfully");
+  } catch (error) {
+    console.error("Error fetching prescription history:", error);
+    res.render("doctorMedicalHistory", { 
+      prescriptions: [],
+      error: "Failed to load prescription history: " + error.message 
+    });
+  }
 };
 
 // Doctor Appointments Controller
@@ -165,26 +189,141 @@ export const prescriptionReadCtrl = (req, res) => {
 };
 
 export const prescriptionCreateCtrl = async (req, res) => {
-  const prescriptionid = 1000 + Math.floor(Math.random() * 9000);
-  // const prescriptionid = 2;
-  const { studentid, doctorid, drugid } = req.body;
-
-  const current_date = new Date();
-
   try {
-    for (const drug of drugid) {
-      const { id, doasage, instruction, days } = drug;
-      await pool.query(
-        "INSERT INTO prescriptions (prescriptionid, studentid, doctorid, createdate) VALUES ($1, $2, $3, $4)",
-        [prescriptionid, studentid, doctorid, current_date],
-        "INSERT INTO prescriptionmedications (prescriptionid, drugid, dosage, instruction, days, studentid, doctorid, createdate) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-        [prescriptionid, id, doasage, instruction, days, studentid, doctorid, current_date]
-      );
+    // Generate a numeric prescription ID instead of UUID
+    const prescriptionId = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+    const { 
+      studentId, 
+      diagnosis, 
+      bloodPressure, 
+      notes,
+      medicines 
+    } = req.body;
+    
+    const doctorId = req.session.userId;
+    
+    // Enhanced session check with more detailed error
+    if (!doctorId) {
+      console.log("Doctor session expired during prescription creation");
+      return res.status(401).json({ 
+        success: false, 
+        error: "Your session has expired. Please login again to continue.",
+        sessionExpired: true  // Flag to indicate session expiration
+      });
     }
-    res.json({ message: "Prescription created successfully." });
+    
+    const currentDate = new Date();
+    
+    // Validate required data
+    if (!studentId || !medicines || !medicines.length) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Missing required data: student ID and at least one medicine are required" 
+      });
+    }
+    
+    // Begin a database transaction
+    const client = await pool.connect();
+    
+    try {
+      await client.query('BEGIN');
+      
+      console.log("Inserting prescription with ID:", prescriptionId, "Type:", typeof prescriptionId);
+      
+      // First query: Insert into prescription table
+      await client.query(
+        `INSERT INTO prescription (
+          prescriptionid, studentid, doctorid, date, diagnosis, bloodpressure, instruction
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [prescriptionId, studentId, doctorId, currentDate, diagnosis, bloodPressure, notes]
+      );
+      
+      // Second query: Insert each medicine into prescriptionmedications table
+      // and update drug quantities
+      for (const medicine of medicines) {
+        // Convert duration string to integer days
+        let days = 0;
+        if (medicine.duration.includes('days')) {
+          days = parseInt(medicine.duration);
+        } else if (medicine.duration.includes('month')) {
+          const months = parseInt(medicine.duration);
+          days = months * 30;
+        } else if (medicine.duration === 'Continuous') {
+          days = 90; // Default continuous prescription to 90 days
+        } else {
+          const parsedDays = parseInt(medicine.duration);
+          days = isNaN(parsedDays) ? 0 : parsedDays;
+        }
+        
+        // Ensure drugId is an integer
+        const drugId = parseInt(medicine.medicineId);
+        if (isNaN(drugId)) {
+          throw new Error(`Invalid medicine ID: ${medicine.medicineId}`);
+        }
+        
+        // Execute separate INSERT statement for each medicine
+        await client.query(
+          `INSERT INTO prescriptionmedications (
+            prescriptionid, drugid, dosage, days, studentid, doctorid, 
+            createdate, timesperday, prepostmeal
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+          [
+            prescriptionId,
+            drugId,
+            medicine.dosage,
+            days,
+            studentId,
+            doctorId,
+            currentDate,
+            medicine.timesPerDay, // Store the full formatted text (e.g. "1 + 0 + 0")
+            medicine.prepostmeal || 'Not specified'
+          ]
+        );
+        
+        // Update drug quantity in the drug table (decrease by 1)
+        const drugResult = await client.query(
+          'UPDATE drug SET quantity = quantity - 1 WHERE drugid = $1 AND quantity > 0 RETURNING quantity',
+          [drugId]
+        );
+        
+        if (drugResult.rows.length === 0) {
+          // If no rows were updated, it might mean the drug is out of stock
+          // Log this but don't fail the transaction
+          console.warn(`Could not update quantity for drug ID ${drugId} - it may be out of stock`);
+        } else {
+          console.log(`Updated quantity for drug ID ${drugId}, new quantity: ${drugResult.rows[0].quantity}`);
+        }
+      }
+      
+      await client.query('COMMIT');
+      
+      res.status(201).json({ 
+        success: true, 
+        message: "Prescription created successfully.",
+        prescriptionId: prescriptionId
+      });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error("Database error during prescription creation:", error);
+      
+      // Provide more specific error message based on the error
+      let errorMessage = "An error occurred while creating the prescription.";
+      if (error.code === '22P02') {
+        errorMessage = "Invalid data type detected. Please check all input values.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      throw new Error(errorMessage);
+    } finally {
+      client.release();
+    }
   } catch (error) {
-    console.error(error);
-    return res.json({ error: "An error occurred while creating the prescription." });
+    console.error("Error creating prescription:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message || "An error occurred while creating the prescription."
+    });
   }
 };
 
@@ -264,6 +403,65 @@ export const getAvailableTimes = async (req, res) => {
   } catch (error) {
     console.error("Error fetching available times:", error);
     res.status(500).json({ error: "An error occurred while fetching available times." });
+  }
+};
+
+// Search medicines with stock information
+export const searchMedicinesCtrl = async (req, res) => {
+  const { query } = req.query;
+  
+  try {
+    // Include dosage information in the query
+    let searchQuery = "SELECT drugid, drugname, quantity, dosage FROM drug WHERE drugname ILIKE $1 ORDER BY drugname ASC";
+    const result = await pool.query(searchQuery, [`%${query}%`]);
+    
+    const medicines = result.rows.map(row => ({
+      id: row.drugid,
+      name: row.drugname,
+      quantity: row.quantity,
+      isAvailable: row.quantity > 0,
+      dosage: row.dosage // Include dosage in the response
+    }));
+    
+    res.json({ success: true, medicines });
+  } catch (error) {
+    console.error("Error searching medicines:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// Get available dosages for a specific medicine
+export const getMedicineDosagesCtrl = async (req, res) => {
+  const { medicineId } = req.params;
+  
+  try {
+    // Adjust column name to match your database structure
+    // If dosage column name is different, replace it here
+    const result = await pool.query(
+      "SELECT dosage FROM drug WHERE drugid = $1",
+      [medicineId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: "Medicine not found" });
+    }
+    
+    // Parse dosages if stored as array/JSON, or split by comma if stored as string
+    let dosages = result.rows[0].dosage;
+    
+    // If dosage is stored as a string with comma separators
+    if (typeof dosages === 'string') {
+      dosages = dosages.split(',').map(d => d.trim());
+    } 
+    // If dosage is null or not in expected format, return a default dosage array
+    else if (!dosages || !Array.isArray(dosages)) {
+      dosages = ["250mg", "500mg", "750mg", "1000mg"];
+    }
+    
+    res.json({ success: true, dosages });
+  } catch (error) {
+    console.error("Error fetching medicine dosages:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 

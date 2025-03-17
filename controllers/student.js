@@ -26,8 +26,103 @@ export const studentDashboardCtrl = async (req, res) => {
 
 // Medical History Controller for student
 export const medicalHistoryCtrl = async (req, res) => {
-  res.render("medical_history", { error: "" });
-  console.log("medical_history");
+  const studentId = req.session.userId;
+  
+  try {
+    // Fetch prescriptions for this student with doctor information
+    const prescriptionsResult = await pool.query(
+      `SELECT p.prescriptionid, p.date, d.fullname as doctorname, 
+              d.specialization, p.diagnosis, p.instruction 
+       FROM prescription p 
+       JOIN doctor d ON p.doctorid = d.doctorid 
+       WHERE p.studentid = $1 
+       ORDER BY p.date DESC`,
+      [studentId]
+    );
+    
+    res.render("medical_history", { 
+      prescriptions: prescriptionsResult.rows,
+      error: "" 
+    });
+    console.log("medical_history loaded successfully");
+  } catch (error) {
+    console.error("Error fetching prescription history:", error);
+    res.render("medical_history", { 
+      prescriptions: [],
+      error: "Failed to load prescription history: " + error.message 
+    });
+  }
+};
+
+// View a specific prescription
+export const viewPrescriptionCtrl = async (req, res) => {
+  try {
+    const { prescriptionId } = req.params;
+    const studentId = req.session.userId;
+    
+    // Check if prescription exists and belongs to this student
+    // Updated to use phonenumber instead of phone
+    const prescriptionResult = await pool.query(
+      `SELECT p.*, s.fullname as patientname, s.department, s.email, s.phonenumber,
+              d.fullname as doctorname, d.specialization
+       FROM prescription p 
+       JOIN student s ON p.studentid = s.studentid 
+       JOIN doctor d ON p.doctorid = d.doctorid
+       WHERE p.prescriptionid = $1 AND p.studentid = $2`,
+      [prescriptionId, studentId]
+    );
+    
+    if (prescriptionResult.rows.length === 0) {
+      return res.status(404).send("Prescription not found");
+    }
+    
+    // Fetch medications prescribed
+    const medicationsResult = await pool.query(
+      `SELECT pm.*, d.drugname 
+       FROM prescriptionmedications pm 
+       JOIN drug d ON pm.drugid = d.drugid 
+       WHERE pm.prescriptionid = $1`,
+      [prescriptionId]
+    );
+    
+    // Fetch student basic info if available
+    let basicInfo = {};
+    try {
+      const infoResult = await pool.query(
+        "SELECT * FROM studentbasicinfo WHERE studentid = $1",
+        [studentId]
+      );
+      if (infoResult.rows.length > 0) {
+        basicInfo = infoResult.rows[0];
+      }
+    } catch (error) {
+      console.error("Could not fetch student basic info:", error);
+      // Continue without basic info
+    }
+    
+    res.render("studentViewPrescription", {
+      prescription: prescriptionResult.rows[0],
+      medications: medicationsResult.rows,
+      basicInfo,
+      error: ""
+    });
+  } catch (error) {
+    console.error("Error viewing prescription:", error);
+    res.status(500).send("Error loading prescription details");
+  }
+};
+
+// View attachments
+export const viewStudentAttachmentsCtrl = async (req, res) => {
+  try {
+    const { prescriptionId } = req.params;
+    // Add logic to fetch attachments if you have them in your database
+    req.session.message = "No attachments found for this prescription";
+    res.redirect("/student/medical-history");
+  } catch (error) {
+    console.error("Error viewing attachments:", error);
+    res.status(500).send("Error loading attachments");
+  }
 };
 
 // View Prescriptions Controller for student

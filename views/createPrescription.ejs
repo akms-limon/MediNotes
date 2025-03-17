@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Prescription</title>
     <link rel="stylesheet" href="/css/createPrescription.css">
+    <style>
+    </style>
 </head>
 <body>
     <!Navigation Bar>
@@ -15,65 +17,26 @@
         <form id="prescription-form">
             <input type="hidden" id="studentId" name="studentId">
             
-            <div class="form-group">
-                <label for="diagnosis">Diagnosis</label>
-                <input type="text" id="diagnosis" name="diagnosis" required>
+            <div class="patient-details-row">
+                <div class="form-field">
+                    <label for="diagnosis">Diagnosis</label>
+                    <input type="text" id="diagnosis" name="diagnosis" required>
+                </div>
+                <div class="form-field">
+                    <label for="blood-pressure">Blood Pressure</label>
+                    <input type="text" id="blood-pressure" name="bloodPressure" required>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="blood-pressure">Blood Pressure</label>
-                <input type="text" id="blood-pressure" name="bloodPressure" required>
-            </div>
+            
             <div class="form-group">
                 <label>Medicines</label>
                 <div id="medicine-list" class="medicine-list">
-                    <div class="medicine-item">
-                        <select name="medicine[]" required>
-                            <option value="">Select Medicine</option>
-                            <option value="Paracetamol">Paracetamol</option>
-                            <option value="Ibuprofen">Ibuprofen</option>
-                            <option value="Amoxicillin">Amoxicillin</option>
-                        </select>
-                        <select name="dosage[]" required>
-                            <option value="">Select Dosage</option>
-                            <option value="250mg">250mg</option>
-                            <option value="500mg">500mg</option>
-                            <option value="750mg">750mg</option>
-                            <option value="1000mg">1000mg</option>
-                        </select>
-                        <select name="duration[]" required>
-                            <option value="">Select Duration</option>
-                            <option value="3 days">3 days</option>
-                            <option value="5 days">5 days</option>
-                            <option value="7 days">7 days</option>
-                            <option value="10 days">10 days</option>
-                            <option value="14 days">14 days</option>
-                            <option value="1 month">1 month</option>
-                            <option value="3 months">3 months</option>
-                            <option value="6 months">6 months</option>
-                            <option value="Continuous">Continuous</option>
-                        </select>
-                        <select name="timesPerDay[]" required>
-                            <option value="">Times per Day</option>
-                            <option value="1">0 + 1 + 0</option>
-                            <option value="2">0 + 0 + 1</option>
-                            <option value="3">1 + 0 + 0</option>
-                            <option value="5">1 + 0 + 1</option>
-                            <option value="6">1 + 1 + 0</option>
-                            <option value="7">0 + 1 + 1</option>
-                            <option value="4">1 + 1 + 1</option>
-                        </select>
-                        <select name="prepostmeal" id="prepostmeal">
-                            <option value="">Pre Post Meal</option>
-                            <option value="Before Meal">Before Meal</option>
-                            <option value="After Meal">After Meal</option>
-                        </select>
-                        <button type="button" onclick="removeMedicineRow(this)">Remove</button>
-                    </div>
+                    <!-- First medicine item will be added by JavaScript -->
                 </div>
                 <button type="button" onclick="addMedicineRow()">Add Medicine</button>
             </div>
 
-            <div class="form-group">
+            <div class="instructions-container">
                 <label for="notes">Instructions</label>
                 <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional instructions"></textarea>
             </div>
@@ -85,100 +48,414 @@
     </div>
 
     <script>
-        // Get student ID from URL parameter
+        // Get student ID from URL parameter and set up doctor ID tracking
+        let doctorId;
+        
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const studentId = urlParams.get('studentId');
+            
             if (studentId) {
                 document.getElementById('studentId').value = studentId;
+            } else {
+                // If no studentId in URL, try to get it from another source or show error
+                const studentIdInput = prompt("Please enter student ID:");
+                if (studentIdInput) {
+                    document.getElementById('studentId').value = studentIdInput;
+                } else {
+                    alert("Student ID is required to create a prescription.");
+                    // Redirect back to dashboard
+                    window.location.href = '/doctor/dashboard';
+                    return;
+                }
             }
+            
+            // Add first medicine row by default
+            addMedicineRow();
+            
+            // Fetch current doctor's session info (optional, depending on your auth system)
+            checkDoctorSession();
         });
+        
+        // Check if doctor session exists
+        async function checkDoctorSession() {
+            try {
+                // This endpoint would need to be implemented if it doesn't exist
+                const response = await fetch('/doctor/session-check');
+                const data = await response.json();
+                
+                if (!data.authenticated || !data.doctorId) {
+                    alert("Your session may have expired. Please log in again.");
+                    window.location.href = '/doctor/login';
+                } else {
+                    doctorId = data.doctorId;
+                }
+            } catch (error) {
+                console.warn("Could not verify doctor session:", error);
+                // Continue anyway, the server will handle authentication
+            }
+        }
         
         function addMedicineRow() {
             const medicineList = document.getElementById("medicine-list");
             const medicineItem = document.createElement("div");
             medicineItem.className = "medicine-item";
+            const medicineId = Date.now(); // Use timestamp as a unique ID for this row
 
             medicineItem.innerHTML = `
-                <select name="medicine[]" required>
-                    <option value="">Select Medicine</option>
-                    <option value="Paracetamol">Paracetamol</option>
-                    <option value="Ibuprofen">Ibuprofen</option>
-                    <option value="Amoxicillin">Amoxicillin</option>
-                </select>
-                <select name="dosage[]" required>
-                    <option value="">Select Dosage</option>
-                    <option value="250mg">250mg</option>
-                    <option value="500mg">500mg</option>
-                    <option value="750mg">750mg</option>
-                    <option value="1000mg">1000mg</option>
-                </select>
-                <select name="duration[]" required>
-                    <option value="">Select Duration</option>
-                    <option value="3 days">3 days</option>
-                    <option value="5 days">5 days</option>
-                    <option value="7 days">7 days</option>
-                    <option value="10 days">10 days</option>
-                    <option value="14 days">14 days</option>
-                    <option value="1 month">1 month</option>
-                    <option value="3 months">3 months</option>
-                    <option value="6 months">6 months</option>
-                    <option value="Continuous">Continuous</option>
-                </select>
+                <div class="medicine-search">
+                    <input type="text" 
+                           class="medicine-search-input" 
+                           placeholder="Search for medicine" 
+                           data-row="${medicineId}" 
+                           autocomplete="off">
+                    <input type="hidden" name="medicine[]" class="selected-medicine-id" value="">
+                    <input type="hidden" name="dosage[]" class="selected-medicine-dosage" value="">
+                    <div class="dosage-info" id="dosage-info-${medicineId}"></div>
+                    <div class="search-results" id="search-results-${medicineId}"></div>
+                </div>
+                <div class="duration-container" id="duration-container-${medicineId}">
+                    <select name="duration[]" class="duration-select" data-row="${medicineId}" onchange="handleDurationChange(this)" required>
+                        <option value="">Duration</option>
+                        <option value="3 days">3 days</option>
+                        <option value="5 days">5 days</option>
+                        <option value="7 days">7 days</option>
+                        <option value="10 days">10 days</option>
+                        <option value="14 days">14 days</option>
+                        <option value="1 month">1 month</option>
+                        <option value="3 months">3 months</option>
+                        <option value="6 months">6 months</option>
+                        <option value="Continuous">Continuous</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
                 <select name="timesPerDay[]" required>
-                    <option value="">Times per Day</option>
-                    <option value="1">0 + 1 + 0</option>
-                    <option value="2">0 + 0 + 1</option>
-                    <option value="3">1 + 0 + 0</option>
-                    <option value="5">1 + 0 + 1</option>
-                    <option value="6">1 + 1 + 0</option>
-                    <option value="7">0 + 1 + 1</option>
-                    <option value="4">1 + 1 + 1</option>
+                    <option value="">Times/Day</option>
+                    <option value="1">0 + 1 + 0</option>/option>
+                    <option value="0 + 0 + 1">0 + 0 + 1</option>
+                    <option value="1 + 0 + 0">1 + 0 + 0</option>
+                    <option value="1 + 0 + 1">1 + 0 + 1</option>
+                    <option value="1 + 1 + 0">1 + 1 + 0</option>
+                    <option value="0 + 1 + 1">0 + 1 + 1</option>
+                    <option value="1 + 1 + 1">1 + 1 + 1</option>
                 </select>
-                <select name="prepostmeal" id="prepostmeal">
-                    <option value="">Pre Post Meal</option>
+                <select name="prepostmeal">
+                    <option value="">Meal Timing</option>
                     <option value="Before Meal">Before Meal</option>
                     <option value="After Meal">After Meal</option>
                 </select>
-                <button type="button" onclick="removeMedicineRow(this)">Remove</button>
+                <button type="button" onclick="removeMedicineRow(this)">✕</button>
             `;
 
             medicineList.appendChild(medicineItem);
+            
+            // Attach event listeners to the new medicine search input
+            const searchInput = medicineItem.querySelector('.medicine-search-input');
+            searchInput.addEventListener('input', debounce(handleMedicineSearch, 300));
+            searchInput.addEventListener('focus', function() {
+                if (this.value.length >= 2) {
+                    const rowId = this.dataset.row;
+                    document.getElementById(`search-results-${rowId}`).style.display = 'block';
+                }
+            });
+            
+            // Close search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.matches('.medicine-search-input')) {
+                    document.querySelectorAll('.search-results').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                }
+            });
         }
 
         function removeMedicineRow(button) {
             button.parentElement.remove();
         }
         
-        // Add form submission handler
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+        
+        // Format dosage information for display
+        function formatDosage(dosage) {
+            if (!dosage) return "No dosage information";
+            
+            // If dosage is a string with comma separators
+            if (typeof dosage === 'string') {
+                return dosage;
+            }
+            
+            // If dosage is an array, join with commas
+            if (Array.isArray(dosage)) {
+                return dosage.join(', ');
+            }
+            
+            // Otherwise just return as string
+            return String(dosage);
+        }
+        
+        async function handleMedicineSearch(event) {
+            const searchTerm = event.target.value.trim();
+            const rowId = event.target.dataset.row;
+            const resultsContainer = document.getElementById(`search-results-${rowId}`);
+            
+            if (searchTerm.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/doctor/medicines/search?query=${encodeURIComponent(searchTerm)}`);
+                const data = await response.json();
+                
+                if (data.success && data.medicines.length > 0) {
+                    resultsContainer.innerHTML = '';
+                    
+                    data.medicines.forEach(medicine => {
+                        const div = document.createElement('div');
+                        div.className = medicine.isAvailable ? 'in-stock' : 'out-of-stock';
+                        
+                        // Format the dosage information for display
+                        const formattedDosage = formatDosage(medicine.dosage);
+                        
+                        div.innerHTML = `
+                            <strong>${medicine.name}</strong> 
+                            <span class="stock-status">${medicine.isAvailable ? 
+                                `(${medicine.quantity} available)` : 
+                                '(Out of stock)'}
+                            </span>
+                            <br>
+                            <small>Dosage: ${formattedDosage}</small>
+                        `;
+                        
+                        // Allow selection of both in-stock and out-of-stock medicines
+                        div.addEventListener('click', function() {
+                            selectMedicine(rowId, medicine.id, medicine.name, medicine.dosage, medicine.isAvailable);
+                        });
+                        
+                        // Add a warning tooltip for out-of-stock medicines
+                        if (!medicine.isAvailable) {
+                            div.title = "Warning: This medicine is currently out of stock";
+                        }
+                        
+                        resultsContainer.appendChild(div);
+                    });
+                    
+                    resultsContainer.style.display = 'block';
+                } else {
+                    resultsContainer.innerHTML = '<div>No medicines found</div>';
+                    resultsContainer.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error searching medicines:', error);
+            }
+        }
+        
+        function selectMedicine(rowId, medicineId, medicineName, dosage, isAvailable) {
+            // Find the row containing this search input
+            const searchInput = document.querySelector(`.medicine-search-input[data-row="${rowId}"]`);
+            const medicineIdInput = searchInput.closest('.medicine-search').querySelector('.selected-medicine-id');
+            const dosageInput = searchInput.closest('.medicine-search').querySelector('.selected-medicine-dosage');
+            const dosageInfoElement = document.getElementById(`dosage-info-${rowId}`);
+            const resultsContainer = document.getElementById(`search-results-${rowId}`);
+            
+            // Update the search input with the selected medicine name
+            searchInput.value = medicineName;
+            medicineIdInput.value = medicineId;
+            
+            // Store the dosage information and display it
+            const formattedDosage = formatDosage(dosage);
+            dosageInput.value = formattedDosage;
+            
+            // Display dosage with a warning if the medicine is out of stock
+            if (!isAvailable) {
+                dosageInfoElement.innerHTML = `Dosage: ${formattedDosage} <span style="color: #ff0000; font-weight: bold;">(Out of stock)</span>`;
+                
+                // Fixed the typo: 'ture' to 'true'
+                const confirmPrescribe = true;
+                
+                // Optional: Show a warning notification when selecting out-of-stock medicine
+                if (!confirmPrescribe) {
+                    searchInput.value = '';
+                    medicineIdInput.value = '';
+                    dosageInput.value = '';
+                    dosageInfoElement.textContent = '';
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+            } else {
+                dosageInfoElement.textContent = `Dosage: ${formattedDosage}`;
+            }
+            
+            // Hide the results dropdown
+            resultsContainer.style.display = 'none';
+        }
+        
+        // Modify function to handle duration dropdown change
+        function handleDurationChange(selectElement) {
+            const medicineId = selectElement.dataset.row;
+            const container = document.getElementById(`duration-container-${medicineId}`);
+            
+            if (selectElement.value === 'custom') {
+                // Store the original select element to restore later if needed
+                const originalSelectHTML = container.innerHTML;
+                
+                // Create an input element to replace the select
+                const inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.name = 'duration[]';
+                inputElement.className = 'custom-duration';
+                inputElement.placeholder = 'Enter custom duration';
+                inputElement.required = true;
+                inputElement.dataset.row = medicineId;
+                
+                // Add a way to revert back to select if needed
+                inputElement.dataset.originalSelect = originalSelectHTML;
+                
+                // Add a blur event to handle empty values
+                inputElement.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        const container = this.parentElement;
+                        container.innerHTML = this.dataset.originalSelect;
+                    }
+                });
+                
+                // Replace the select with the input
+                container.innerHTML = '';
+                container.appendChild(inputElement);
+                inputElement.focus();
+            }
+        }
+        
+        // Modify form submission handler to handle custom duration
         document.getElementById('prescription-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
             // Collect form data
             const formData = new FormData(this);
+            const studentId = formData.get('studentId');
+            
             const data = {
-                studentId: formData.get('studentId'),
+                studentId: studentId,
                 diagnosis: formData.get('diagnosis'),
                 bloodPressure: formData.get('bloodPressure'),
                 notes: formData.get('notes'),
                 medicines: []
             };
             
+            // Validate required fields
+            if (!studentId || studentId.trim() === '') {
+                alert('Student ID is required. Please refresh and try again.');
+                return;
+            }
+            
+            if (!data.diagnosis) {
+                alert('Diagnosis is required.');
+                return;
+            }
+            
+            if (!data.bloodPressure) {
+                alert('Blood pressure reading is required.');
+                return;
+            }
+            
             // Get all medicines
-            const medicineElements = document.querySelectorAll('.medicine-item');
-            medicineElements.forEach((element, index) => {
-                data.medicines.push({
-                    medicine: formData.getAll('medicine[]')[index],
-                    dosage: formData.getAll('dosage[]')[index],
-                    duration: formData.getAll('duration[]')[index],
-                    timesPerDay: formData.getAll('timesPerDay[]')[index],
-                    prepostmeal: formData.getAll('prepostmeal')[index]
-                });
+            const medicineItems = document.querySelectorAll('.medicine-item');
+            let hasMedicines = false;
+            
+            medicineItems.forEach((element, index) => {
+                const medicineId = element.querySelector('.selected-medicine-id').value;
+                if (medicineId) {
+                    hasMedicines = true;
+                    // Get duration value - could be either from select or input
+                    let durationElement = element.querySelector('.duration-container').firstElementChild;
+                    let duration = durationElement.value.trim();
+                    
+                    // If empty, set to "Not specified"
+                    if (!duration) {
+                        duration = 'Not specified';
+                    }
+                    
+                    // Get timesPerDay and prepostmeal values
+                    const timesPerDayElements = formData.getAll('timesPerDay[]');
+                    const prepostmealElements = document.querySelectorAll('[name="prepostmeal"]');
+                    
+                    // Validate required fields for this medicine
+                    const timesPerDay = index < timesPerDayElements.length ? timesPerDayElements[index] : '';
+                    if (!timesPerDay) {
+                        alert(`Please select times per day for medicine "${element.querySelector('.medicine-search-input').value}"`);
+                        return;
+                    }
+                    
+                    data.medicines.push({
+                        medicineId: medicineId,
+                        medicineName: element.querySelector('.medicine-search-input').value,
+                        dosage: element.querySelector('.selected-medicine-dosage').value,
+                        duration: duration,
+                        timesPerDay: timesPerDay, // This will now contain the actual timing format
+                        prepostmeal: index < prepostmealElements.length ? prepostmealElements[index].value : 'Not specified'
+                    });
+                }
             });
             
-            // TODO: Send data to server (will be implemented later)
-            console.log('Prescription data:', data);
-            alert('Prescription created successfully!');
+            if (!hasMedicines) {
+                alert('Please add at least one medicine to the prescription.');
+                return;
+            }
+            
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = "Submitting...";
+            submitButton.disabled = true;
+            
+            // Send data to server
+            fetch('/doctor/prescription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        // Unauthorized - session expired
+                        alert('Your session has expired. Please log in again.');
+                        window.location.href = '/doctor/login';
+                        throw new Error('Session expired');
+                    }
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    alert('Prescription created successfully!');
+                    // Redirect to a success page or clear the form
+                    window.location.href = '/doctor/dashboard';
+                } else {
+                    alert('Failed to create prescription: ' + (result.error || 'Unknown error'));
+                    // Reset button
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting prescription:', error);
+                if (!error.message || error.message !== 'Session expired') {
+                    alert('An error occurred while submitting the prescription. Please try again.');
+                }
+                // Reset button
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            });
         });
     </script>
 </body>
