@@ -13,13 +13,35 @@ const app = express();
 const port = 3000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Configure the session middleware
+// Configure the session middleware with extended duration
 app.use(session({
   secret: 'sdklf8943jlkj',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { 
+    secure: false, // Set to true if using HTTPS
+    maxAge: 24 * 60 * 60 * 1000, // Set session duration to 24 hours (in milliseconds)
+    httpOnly: true
+  }
 }));
+
+// Session check middleware
+app.use((req, res, next) => {
+  // Skip session check for public routes
+  if (req.path === '/' || req.path === '/login' || req.path === '/signup' || req.path.startsWith('/css') || req.path.startsWith('/js')) {
+    return next();
+  }
+  
+  // Check if user session exists where required
+  if (req.path.startsWith('/doctor') || req.path.startsWith('/student')) {
+    if (!req.session.userId) {
+      // Redirect to homepage if session expired
+      console.log('Session expired, redirecting to homepage');
+      return res.redirect('/');
+    }
+  }
+  next();
+});
 
 // Set up the view engine (example: EJS)
 app.set("view engine", "ejs"); 

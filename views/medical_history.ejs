@@ -12,6 +12,12 @@
     <div class="container">
         <h1>Medical History</h1>
 
+        <% if (error && error.length > 0) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
         <table>
             <thead>
                 <tr>
@@ -24,58 +30,24 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2025-02-04</td>
-                    <td>Flu</td>
-                    <td>Dr. Nasim Shah</td>
-                    <td>Take rest and drink fluids</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
-                <tr>
-                    <td>2025-01-20</td>
-                    <td>Allergy</td>
-                    <td>Dr. Edword Gomez</td>
-                    <td>Use antihistamines as needed</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
-                <tr>
-                    <td>2024-12-15</td>
-                    <td>Headache</td>
-                    <td>Dr. Farjana</td>
-                    <td>Take painkillers and rest</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
-                <tr>
-                    <td>2024-11-30</td>
-                    <td>Stomachache</td>
-                    <td>Dr. Animesh</td>
-                    <td>Avoid spicy food and drink water</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
-                <tr>
-                    <td>2024-10-25</td>
-                    <td>Back Pain</td>
-                    <td>Dr. Debi Shethy</td>
-                    <td>Apply hot/cold packs and do stretches</td>
-                    <td class="actions"><a href="/student/view-prescriptions" onclick="viewPrescription()">View</a></td>
-                    <td class="actions"><a href="/student/view-attachments" onclick="viewAttachments()">View</a></td>
-                </tr>
+                <% if (locals.prescriptions && prescriptions.length > 0) { %>
+                    <% prescriptions.forEach(prescription => { %>
+                        <tr>
+                            <td><%= new Date(prescription.date).toLocaleDateString() %></td>
+                            <td><%= prescription.diagnosis %></td>
+                            <td><%= prescription.doctorname %> (<%= prescription.specialization %>)</td>
+                            <td><%= prescription.instruction %></td>
+                            <td class="actions"><a href="/student/view-prescription/<%= prescription.prescriptionid %>">View</a></td>
+                            <td class="actions"><a href="/student/view-attachments/<%= prescription.prescriptionid %>">View</a></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="no-records">No prescription history found</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>
-
-    <script>
-        function viewPrescription() {
-            alert('Viewing Prescription');
-        }
-        
-        function viewAttachments() {
-            alert('Viewing Attachments');
-        }
-    </script>
 </body>
 </html>

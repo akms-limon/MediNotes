@@ -1,5 +1,5 @@
 import express from "express";
-import { appointmentCreateCtrl, medicalHistoryCtrl, requestAppoinmentCtrl, studentAppointmentsCtrl, studentDashboardCtrl, viewAttachmentsCtrl, viewPrescriptionsCtrl } from "../controllers/student.js";
+import { appointmentCreateCtrl, medicalHistoryCtrl, requestAppoinmentCtrl, studentAppointmentsCtrl, studentDashboardCtrl, viewAttachmentsCtrl, viewPrescriptionCtrl, viewPrescriptionsCtrl, viewStudentAttachmentsCtrl } from "../controllers/student.js";
 import { isAuthenticated } from "../middlewares/sessionCheck.js";
 
 const studentRoutes = express.Router();
@@ -18,6 +18,10 @@ studentRoutes.get('/view-prescriptions', viewPrescriptionsCtrl);
 
 //GET/view-attachments
 studentRoutes.get('/view-attachments', viewAttachmentsCtrl);
+
+// New routes for viewing specific prescriptions and attachments
+studentRoutes.get('/view-prescription/:prescriptionId', viewPrescriptionCtrl);
+studentRoutes.get('/view-attachments/:prescriptionId', viewStudentAttachmentsCtrl);
 
 //GET/request-appointment
 studentRoutes.get('/request-appointment', requestAppoinmentCtrl);

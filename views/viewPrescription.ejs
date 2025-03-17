@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Details</title>
+    <link rel="stylesheet" href="/css/prescription.css">
+</head>
+<body>
+    <%- include('partials/doctorNavbar.ejs') %>
+    <div class="container">
+        <div class="header">
+            <h1>Prescription Details</h1>
+            <p class="prescription-id">Prescription ID: <%= prescription.prescriptionid %> | Date: <%= new Date(prescription.date).toLocaleDateString() %></p>
+        </div>
+
+        <div class="info-section doctor-details">
+            <h2>Doctor Information</h2>
+            <table class="doctor-info">
+                <tr>
+                    <td class="info-label">Doctor Name:</td>
+                    <td class="info-value"><%= prescription.doctorname || 'Not available' %></td>
+                </tr>
+                <tr>
+                    <td class="info-label">Specialization:</td>
+                    <td class="info-value"><%= prescription.specialization || 'Not available' %></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-section patient-details">
+            <h2>Patient Information</h2>
+            <table class="patient-combined-info">
+                <tr>
+                    <td class="info-label">Name:</td>
+                    <td class="info-value"><%= prescription.patientname || 'Student' %></td>
+                    <td class="info-label">Height:</td>
+                    <td class="info-value">1.72</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Department:</td>
+                    <td class="info-value">CSE</td>
+                    <td class="info-label">Weight:</td>
+                    <td class="info-value">80.50</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Email:</td>
+                    <td class="info-value">student@gmail.com</td>
+                    <td class="info-label">Blood Group:</td>
+                    <td class="info-value">B+</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Phone:</td>
+                    <td class="info-value">+8801518464154</td>
+                    <td class="info-label">Blood Pressure:</td>
+                    <td class="info-value"><%= prescription.bloodpressure || 'Not recorded' %></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-section medicine-section">
+            <h2>Prescribed Medicines</h2>
+            <% if (medications && medications.length > 0) { %>
+                <table class="prescription-table">
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Dosage</th>
+                            <th>Duration</th>
+                            <th>Times per Day</th>
+                            <% if (medications[0].prepostmeal) { %>
+                            <th>Before/After Meal</th>
+                            <% } %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% medications.forEach(med => { %>
+                            <tr>
+                                <td><%= med.drugname %></td>
+                                <td><%= med.dosage %></td>
+                                <td><%= med.days %> days</td>
+                                <td><%= med.timesperday %></td>
+                                <% if (med.prepostmeal) { %>
+                                <td><%= med.prepostmeal %></td>
+                                <% } %>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p class="no-medicines">No medicines were prescribed.</p>
+            <% } %>
+        </div>
+
+        <% if (prescription.instruction) { %>
+        <div class="info-section doctor-instructions">
+            <h2>Doctor's Instructions</h2>
+            <p><%= prescription.instruction %></p>
+        </div>
+        <% } %>
+
+        <div class="action-buttons">
+            <a href="javascript:window.print()" class="action-btn print-btn">Print Prescription</a>
+            <a href="/doctor/medical-history" class="action-btn back-btn">Back to History</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any client-side functionality here if needed
+        });
+    </script>
+</body>
+</html>
