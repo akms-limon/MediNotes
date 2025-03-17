@@ -41,46 +41,60 @@
                 </label>
             </div>
             <div id="commonFields">
-                <label for="fullname">Full Name:</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required
-                    value="<%= typeof formData !== 'undefined' ? formData.fullname || '' : '' %>">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="fullname">Full Name:</label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required
+                            value="<%= typeof formData !== 'undefined' ? formData.fullname || '' : '' %>">
+                    </div>
+                </div>
                 
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required
-                    value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required
+                            value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>">
+                    </div>
+                </div>
                 
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                
-                <label for="confirmPassword">Confirm Password:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="confirmPassword">Confirm Password:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+                    </div>
+                </div>
                 <span id="passwordError" style="color: red; display: none;">Passwords do not match</span>
 
-                <label for="Id">ID:</label>
-                <input type="text" id="Id" name="Id" placeholder="Enter your ID" required
-                    value="<%= typeof formData !== 'undefined' ? formData.Id || '' : '' %>">
-            </div>
-            <div id="doctorFields" style="display: none;">
-                <label for="specialization">Specialization:</label>
-                <select id="specialization" name="specialization">
-                    <option value="Cardiology" <%= typeof formData !== 'undefined' && formData.specialization === 'Cardiology' ? 'selected' : '' %>>Cardiology</option>
-                    <option value="Dermatology" <%= typeof formData !== 'undefined' && formData.specialization === 'Dermatology' ? 'selected' : '' %>>Dermatology</option>
-                    <option value="Neurology" <%= typeof formData !== 'undefined' && formData.specialization === 'Neurology' ? 'selected' : '' %>>Neurology</option>
-                    <option value="Orthopedics" <%= typeof formData !== 'undefined' && formData.specialization === 'Orthopedics' ? 'selected' : '' %>>Orthopedics</option>
-                    <option value="Pediatrics" <%= typeof formData !== 'undefined' && formData.specialization === 'Pediatrics' ? 'selected' : '' %>>Pediatrics</option>
-                    <option value="Psychiatry" <%= typeof formData !== 'undefined' && formData.specialization === 'Psychiatry' ? 'selected' : '' %>>Psychiatry</option>
-                    <option value="Gynecology" <%= typeof formData !== 'undefined' && formData.specialization === 'Gynecology' ? 'selected' : '' %>>Gynecology</option>
-                    <option value="Ophthalmology" <%= typeof formData !== 'undefined' && formData.specialization === 'Ophthalmology' ? 'selected' : '' %>>Ophthalmology</option>
-                    <option value="Oncology" <%= typeof formData !== 'undefined' && formData.specialization === 'Oncology' ? 'selected' : '' %>>Oncology</option>
-                    <option value="General Medicine" <%= typeof formData !== 'undefined' && formData.specialization === 'General Medicine' ? 'selected' : '' %>>General Medicine</option>
-                </select>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="Id">ID:</label>
+                        <input type="text" id="Id" name="Id" placeholder="Enter your ID" required
+                            value="<%= typeof formData !== 'undefined' ? formData.Id || '' : '' %>">
+                    </div>
+                    <div id="specializationContainer" class="form-field" style="display: none;">
+                        <label for="specialization">Specialization:</label>
+                        <select id="specialization" name="specialization">
+                            <option value="Cardiology" <%= typeof formData !== 'undefined' && formData.specialization === 'Cardiology' ? 'selected' : '' %>>Cardiology</option>
+                            <option value="Dermatology" <%= typeof formData !== 'undefined' && formData.specialization === 'Dermatology' ? 'selected' : '' %>>Dermatology</option>
+                            <option value="Neurology" <%= typeof formData !== 'undefined' && formData.specialization === 'Neurology' ? 'selected' : '' %>>Neurology</option>
+                            <option value="Orthopedics" <%= typeof formData !== 'undefined' && formData.specialization === 'Orthopedics' ? 'selected' : '' %>>Orthopedics</option>
+                            <option value="Pediatrics" <%= typeof formData !== 'undefined' && formData.specialization === 'Pediatrics' ? 'selected' : '' %>>Pediatrics</option>
+                            <option value="Psychiatry" <%= typeof formData !== 'undefined' && formData.specialization === 'Psychiatry' ? 'selected' : '' %>>Psychiatry</option>
+                            <option value="Gynecology" <%= typeof formData !== 'undefined' && formData.specialization === 'Gynecology' ? 'selected' : '' %>>Gynecology</option>
+                            <option value="Ophthalmology" <%= typeof formData !== 'undefined' && formData.specialization === 'Ophthalmology' ? 'selected' : '' %>>Ophthalmology</option>
+                            <option value="Oncology" <%= typeof formData !== 'undefined' && formData.specialization === 'Oncology' ? 'selected' : '' %>>Oncology</option>
+                            <option value="General Medicine" <%= typeof formData !== 'undefined' && formData.specialization === 'General Medicine' ? 'selected' : '' %>>General Medicine</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <button type="submit" id="submitBtn">Sign Up</button>
             <p>Already have an account? <a href="/login">Login</a></p>
         </form>
-        <footer>
-            <p>&copy; MediNotes</p>
-        </footer>
     </div>
 
     <script>
@@ -88,23 +102,23 @@
             // Get role radio buttons and doctor fields element
             const doctorRadio = document.querySelector('input[value="doctor"]');
             const studentRadio = document.querySelector('input[value="student"]');
-            const doctorFields = document.getElementById('doctorFields');
+            const specializationContainer = document.getElementById('specializationContainer');
             const specializationSelect = document.getElementById('specialization');
             
             // Toggle doctor fields based on role selection
             doctorRadio.addEventListener('change', function() {
-                doctorFields.style.display = 'block';
+                specializationContainer.style.display = 'block';
                 specializationSelect.required = true;
             });
             
             studentRadio.addEventListener('change', function() {
-                doctorFields.style.display = 'none';
+                specializationContainer.style.display = 'none';
                 specializationSelect.required = false;
             });
             
             // Show doctor fields on page load if doctor is selected
             if (doctorRadio.checked) {
-                doctorFields.style.display = 'block';
+                specializationContainer.style.display = 'block';
                 specializationSelect.required = true;
             }
             

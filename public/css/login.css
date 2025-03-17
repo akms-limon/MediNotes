@@ -46,26 +46,26 @@ body {
   float: left;
 }
 
-.login-container {
-  max-width: 500px;
-  margin: 80px auto;
-  padding: 30px;
+.container {
+  max-width: 450px;
+  width: 100%;
+  margin: 50px auto;
+  padding: 25px;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   text-align: center;
   background-color: white;
-  flex: 1;
+  /* Removed flex: 1 to prevent excessive space */
 }
 
-.login-container h1 {
-  margin-bottom: 25px;
+
+h1 {
   color: #3498db;
-  text-align: center;
-  font-size: 28px;
   font-weight: 500;
+  margin-bottom: 15px;
 }
 
-.login-container label {
+.container label {
   display: block;
   margin-bottom: 10px;
   font-weight: 500;
@@ -74,10 +74,10 @@ body {
   font-size: 16px;
 }
 
-.login-container input {
+.container input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
+  padding: 10px;
+  margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 16px;
@@ -86,13 +86,13 @@ body {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.login-container input:focus {
+.container input:focus {
   border-color: #3498db;
   outline: none;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
-.login-container button {
+.container button {
   width: 100%;
   padding: 12px;
   border: none;
@@ -105,12 +105,13 @@ body {
   font-weight: 500;
 }
 
-.login-container button:hover {
+.container button:hover {
   background-color: #2980b9;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Error message styling */
 .error-message {
   color: #e74c3c;
   font-size: 14px;
@@ -125,4 +126,26 @@ body {
   color: #e74c3c;
   font-size: 14px;
   margin-top: 10px;
+}
+
+/* Form field styling */
+.form-field {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+/* Add styles for the sign up link at the bottom */
+.container p {
+  margin-top: 15px;
+  margin-bottom: 10;
+  font-size: 14px;
+}
+
+.container p a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.container p a:hover {
+  text-decoration: underline;
 }

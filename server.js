@@ -6,6 +6,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import connectToPostgres from "./database/db.js";
 import globalErrhandler from "./middlewares/globalHandler.js";
+import adminRoutes from "./routes/admin.js"; // Import admin routes
 import doctorRoutes from "./routes/doctor.js";
 import studentRoutes from "./routes/student.js"; // Import student routes
 import userRoutes from "./routes/users.js";
@@ -33,7 +34,7 @@ app.use((req, res, next) => {
   }
   
   // Check if user session exists where required
-  if (req.path.startsWith('/doctor') || req.path.startsWith('/student')) {
+  if (req.path.startsWith('/doctor') || req.path.startsWith('/student') || req.path.startsWith('/admin')) {
     if (!req.session.userId) {
       // Redirect to homepage if session expired
       console.log('Session expired, redirecting to homepage');
@@ -64,6 +65,7 @@ app.use("/", userRoutes);
 
 app.use('/doctor', doctorRoutes);
 app.use('/student', studentRoutes); // Use student routes
+app.use('/admin', adminRoutes); // Use admin routes
 
 //gehandle
 app.use(globalErrhandler);

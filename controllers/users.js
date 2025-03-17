@@ -83,7 +83,7 @@ export const signupCtrl = async (req, res, next) => {
     } else if (role === "doctor") {
       await pool.query(
         "INSERT INTO doctor (doctorid, fullname, email, password, status, specialization) VALUES ($1, $2, $3, $4, $5, $6)",
-        [Id, fullname, email, passwordHashed, 1, specialization]
+        [Id, fullname, email, passwordHashed, 0, specialization] // Changed status from 1 to 0 (pending approval)
       );
     } else {
       return res.render("signup", { 
@@ -125,6 +125,12 @@ export const loginCtrl = async (req, res) => {
       [email]
     );
 
+    // Check if email exists in admin table
+    const adminFound = await pool.query(
+      "SELECT * FROM admin WHERE email = $1",
+      [email]
+    );
+
     let user = null;
     let role = "";
 
@@ -134,18 +140,35 @@ export const loginCtrl = async (req, res) => {
     } else if (doctorFound.rows.length > 0) {
       user = doctorFound.rows[0];
       role = "doctor";
+    } else if (adminFound.rows.length > 0) {
+      user = adminFound.rows[0];
+      role = "admin";
     } else {
       return res.render("login", { error: "Invalid login credentials" });
     }
 
-    // Validate password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Additional check for doctor authorization status
+    if (role === "doctor" && user.status === 0) {
+      return res.render("login", { 
+        error: "Your account is pending authorization. Please contact the administrator.",
+        waitingForApproval: true
+      });
+    }
+
+    // Validate password (different handling for admin as password is not hashed)
+    let isPasswordValid = false;
+    if (role === "admin") {
+      isPasswordValid = (password === user.password); // Direct comparison for admin
+    } else {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+    }
+
     if (!isPasswordValid) {
       return res.render("login", { error: "Invalid login credentials" });
     }
 
     // Save the user ID and role in the session
-    req.session.userId = user.studentid || user.doctorid; // Ensure correct ID is set
+    req.session.userId = user.studentid || user.doctorid || user.adminid;
     req.session.role = role;
 
     // Redirect to appropriate dashboard
@@ -154,6 +177,8 @@ export const loginCtrl = async (req, res) => {
       res.redirect('/student/dashboard');
     } else if (role === "doctor") {
       res.redirect('/doctor/dashboard');
+    } else if (role === "admin") {
+      res.redirect('/admin-dashboard');
     }
   } catch (error) {
     console.error(error);
@@ -163,6 +188,99 @@ export const loginCtrl = async (req, res) => {
 
 // Admin Dashboard Controller
 export const adminDashboardCtrl = async (req, res) => {
-  res.render("adminDashboard", { error: "" });
-  console.log("admin dashboard");
+  try {
+    // Check if user is authenticated as admin
+    if (req.session.role !== 'admin') {
+      return res.redirect('/login');
+    }
+
+    // Fetch admin details
+    const adminResult = await pool.query(
+      "SELECT * FROM admin WHERE adminid = $1",
+      [req.session.userId]
+    );
+
+    if (adminResult.rows.length === 0) {
+      return res.redirect('/login');
+    }
+
+    const admin = adminResult.rows[0];
+
+    // Fetch pending doctor information for admin dashboard
+    const pendingDoctors = await pool.query(
+      "SELECT * FROM doctor WHERE status = 0" // Changed from status 1 to status 0 for pending
+    );
+
+    // Render admin dashboard with admin and pending doctors information
+    res.render("adminDashboard", { 
+      admin: admin,
+      pendingDoctors: pendingDoctors.rows
+    });
+
+  } catch (error) {
+    console.error("Error fetching admin dashboard data:", error);
+    res.render("adminDashboard", { 
+      error: "Failed to load dashboard data",
+      admin: null,
+      pendingDoctors: []
+    });
+  }
+};
+
+// New admin controllers for doctor authorization
+export const approveDoctorCtrl = async (req, res) => {
+  try {
+    // Check if user is authenticated as admin
+    if (req.session.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Unauthorized access' });
+    }
+
+    const doctorId = req.params.id;
+    
+    await pool.query(
+      "UPDATE doctor SET status = 1 WHERE doctorid = $1",
+      [doctorId]
+    );
+    
+    return res.json({ success: true, message: 'Doctor approved successfully' });
+  } catch (error) {
+    console.error('Error approving doctor:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const rejectDoctorCtrl = async (req, res) => {
+  try {
+    // Check if user is authenticated as admin
+    if (req.session.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Unauthorized access' });
+    }
+
+    const doctorId = req.params.id;
+    
+    await pool.query(
+      "UPDATE doctor SET status = -1 WHERE doctorid = $1", // Use -1 for rejected status
+      [doctorId]
+    );
+    
+    return res.json({ success: true, message: 'Doctor rejected successfully' });
+  } catch (error) {
+    console.error('Error rejecting doctor:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const getPendingDoctorsCtrl = async (req, res) => {
+  try {
+    // Check if user is authenticated as admin
+    if (req.session.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Unauthorized access' });
+    }
+    
+    const result = await pool.query("SELECT * FROM doctor WHERE status = 0");
+    return res.json({ success: true, pendingDoctors: result.rows });
+  } catch (error) {
+    console.error('Error fetching pending doctors:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 };
