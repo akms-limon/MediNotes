@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Medical History</title>
+    <link rel="stylesheet" href="/css/medical_history.css">
+    <style>
+        .student-info {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4caf50;
+        }
+        .student-info h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .student-info p {
+            margin: 5px 0;
+            color: #34495e;
+        }
+        .back-button {
+            margin-bottom: 15px;
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include the doctor navbar -->
+    <%- include('partials/doctorNavbar.ejs') %>
+    <div class="container">
+        <a href="javascript:history.back()" class="back-button">Back to Search</a>
+        
+        <% if (student) { %>
+            <div class="student-info">
+                <h2>Student Information</h2>
+                <p><strong>Name:</strong> <%= student.fullname %></p>
+                <p><strong>Email:</strong> <%= student.email %></p>
+                <p><strong>Department:</strong> <%= student.department %></p>
+            </div>
+        <% } %>
+
+        <h1>Medical History</h1>
+
+        <% if (error && error.length > 0) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Prescribed Date</th>
+                    <th>Diagnosis</th>
+                    <th>Doctor Name</th>
+                    <th>Doctor's Instructions</th>
+                    <th>Prescription</th>
+                    <th>Attachments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (locals.prescriptions && prescriptions.length > 0) { %>
+                    <% prescriptions.forEach(prescription => { %>
+                        <tr>
+                            <td><%= new Date(prescription.date).toLocaleDateString() %></td>
+                            <td><%= prescription.diagnosis %></td>
+                            <td><%= prescription.doctorname %> (<%= prescription.specialization %>)</td>
+                            <td><%= prescription.instruction %></td>
+                            <td class="actions"><a href="/doctor/view-prescription/<%= prescription.prescriptionid %>">View</a></td>
+                            <td class="actions"><a href="/doctor/view-attachments/<%= prescription.prescriptionid %>">View</a></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="no-records">No prescription history found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
