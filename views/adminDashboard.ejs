@@ -31,7 +31,7 @@
         </div>
         
         <!-- Authorization Tab Content -->
-        <div id="authorization" class="tab-content">
+        <div id="authorization" class="tab-content active">
             <div class="dashboard-section">
                 <h3>Pending Doctor Requests</h3>
                 <% if (pendingDoctors && pendingDoctors.length > 0) { %>
@@ -77,6 +77,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Set authorization tab as active by default
+            document.getElementById('authorization').classList.add('active');
+            document.querySelector('[data-tab="authorization"]').classList.add('active');
+            
             // Tab navigation
             document.querySelectorAll('.tab-link').forEach(tab => {
                 tab.addEventListener('click', function(e) {
